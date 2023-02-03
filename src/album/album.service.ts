@@ -1,16 +1,16 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { v4 as uuidv4, validate as uuidValidate } from 'uuid';
 
-import { Album } from './interfaces/album.interface';
+import { DbService } from 'src/db/db.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 
 @Injectable()
 export class AlbumService {
-  private albums: Album[] = [];
+  constructor(private db: DbService) {}
 
   getAll() {
-    return this.albums;
+    return this.db.albums;
   }
 
   getById(id: string) {
@@ -18,7 +18,7 @@ export class AlbumService {
       throw new HttpException('Invalid album ID', HttpStatus.BAD_REQUEST);
     }
 
-    const album = this.albums.find((album) => album.id === id);
+    const album = this.db.albums.find((album) => album.id === id);
 
     if (!album) {
       throw new HttpException('Album was not found', HttpStatus.NOT_FOUND);
@@ -32,7 +32,7 @@ export class AlbumService {
       throw new HttpException('Invalid album ID', HttpStatus.BAD_REQUEST);
     }
 
-    const albumIndex = this.albums.findIndex((album) => album.id === id);
+    const albumIndex = this.db.albums.findIndex((album) => album.id === id);
 
     if (albumIndex === -1) {
       throw new HttpException('Album was not found', HttpStatus.NOT_FOUND);
@@ -44,7 +44,7 @@ export class AlbumService {
   create(createAlbumDto: CreateAlbumDto) {
     const albumId = uuidv4();
     const album = { id: albumId, ...createAlbumDto };
-    this.albums.push(album);
+    this.db.albums.push(album);
 
     return album;
   }
@@ -61,8 +61,22 @@ export class AlbumService {
 
   delete(id: string) {
     const albumIndex = this.getIndexById(id);
-    this.albums.splice(albumIndex, 1);
+    this.db.albums.splice(albumIndex, 1);
 
     return null;
+  }
+
+  removeArtist(artistId: string) {
+    const oldAlbums = this.getAll();
+
+    const newAlbums = oldAlbums.map((album) => {
+      if (album.artistId === artistId) {
+        album.artistId = null;
+      }
+
+      return album;
+    });
+
+    this.db.albums = newAlbums;
   }
 }

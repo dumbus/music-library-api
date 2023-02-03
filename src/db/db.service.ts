@@ -8,11 +8,11 @@ import { User } from 'src/user/interfaces/user.interface';
 
 @Injectable()
 export class DbService {
-  public readonly albums: Album[] = [];
-  public readonly artists: Artist[] = [];
-  public readonly tracks: Track[] = [];
-  public readonly users: User[] = [];
-  public readonly favorites: Favorites = {
+  public albums: Album[] = [];
+  public artists: Artist[] = [];
+  public tracks: Track[] = [];
+  public users: User[] = [];
+  public favorites: Favorites = {
     albums: [],
     artists: [],
     tracks: [],

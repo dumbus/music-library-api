@@ -1,13 +1,25 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  Injectable,
+  Inject,
+  forwardRef,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { v4 as uuidv4, validate as uuidValidate } from 'uuid';
 
 import { DbService } from 'src/db/db.service';
+import { AlbumService } from 'src/album/album.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 
 @Injectable()
 export class ArtistService {
-  constructor(private db: DbService) {}
+  constructor(
+    private db: DbService,
+
+    @Inject(forwardRef(() => AlbumService))
+    private albumService: AlbumService,
+  ) {}
 
   getAll() {
     return this.db.artists;
@@ -61,6 +73,8 @@ export class ArtistService {
   delete(id: string) {
     const artistIndex = this.getIndexById(id);
     this.db.artists.splice(artistIndex, 1);
+
+    this.albumService.removeArtist(id);
 
     return null;
   }
