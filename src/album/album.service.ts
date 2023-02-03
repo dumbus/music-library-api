@@ -1,4 +1,4 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, ConsoleLogger } from '@nestjs/common';
 import { v4 as uuidv4, validate as uuidValidate } from 'uuid';
 
 import { DbService } from 'src/db/db.service';
@@ -19,6 +19,8 @@ export class AlbumService {
     }
 
     const album = this.db.albums.find((album) => album.id === id);
+
+    console.log(album);
 
     if (!album) {
       throw new HttpException('Album was not found', HttpStatus.NOT_FOUND);
