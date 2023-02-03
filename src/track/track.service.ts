@@ -1,4 +1,4 @@
-import { Injectable, HttpException, HttpStatus, ConsoleLogger } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { v4 as uuidv4, validate as uuidValidate } from 'uuid';
 
 import { DbService } from 'src/db/db.service';
