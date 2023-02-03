@@ -9,6 +9,7 @@ import { v4 as uuidv4, validate as uuidValidate } from 'uuid';
 
 import { DbService } from 'src/db/db.service';
 import { AlbumService } from 'src/album/album.service';
+import { TrackService } from 'src/track/track.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 
@@ -19,6 +20,8 @@ export class ArtistService {
 
     @Inject(forwardRef(() => AlbumService))
     private albumService: AlbumService,
+    @Inject(forwardRef(() => TrackService))
+    private trackService: TrackService,
   ) {}
 
   getAll() {
@@ -75,6 +78,7 @@ export class ArtistService {
     this.db.artists.splice(artistIndex, 1);
 
     this.albumService.removeArtist(id);
+    this.trackService.removeArtist(id);
 
     return null;
   }

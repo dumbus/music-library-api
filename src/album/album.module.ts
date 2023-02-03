@@ -1,11 +1,12 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 
 import { DbModule } from 'src/db/db.module';
+import { TrackModule } from 'src/track/track.module';
 import { AlbumController } from './album.controller';
 import { AlbumService } from './album.service';
 
 @Module({
-  imports: [DbModule],
+  imports: [DbModule, forwardRef(() => TrackModule)],
   controllers: [AlbumController],
   providers: [AlbumService],
   exports: [AlbumService],
