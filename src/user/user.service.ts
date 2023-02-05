@@ -50,7 +50,7 @@ export class UserService {
       version: 1,
       createdAt: dateNow,
       updatedAt: dateNow,
-      ...createUserDto
+      ...createUserDto,
     };
     this.db.users.push(user);
 

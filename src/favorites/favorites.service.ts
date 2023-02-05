@@ -1,4 +1,10 @@
-import { Injectable, Inject, forwardRef, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  Injectable,
+  Inject,
+  forwardRef,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { validate as uuidValidate } from 'uuid';
 
 import { DbService } from 'src/db/db.service';
@@ -10,13 +16,13 @@ import { TrackService } from 'src/track/track.service';
 export class FavoritesService {
   constructor(
     private db: DbService,
-    
+
     @Inject(forwardRef(() => ArtistService))
-    private artistService: ArtistService, 
+    private artistService: ArtistService,
     @Inject(forwardRef(() => AlbumService))
-    private albumService: AlbumService, 
+    private albumService: AlbumService,
     @Inject(forwardRef(() => TrackService))
-    private trackService: TrackService,  
+    private trackService: TrackService,
   ) {}
 
   getAll() {
@@ -41,7 +47,7 @@ export class FavoritesService {
     return {
       artists: favoriteArtists,
       albums: favoriteAlbums,
-      tracks: favoriteTracks
+      tracks: favoriteTracks,
     };
   }
 
@@ -53,11 +59,14 @@ export class FavoritesService {
 
       return { message: 'Artist was successfully added to Favorites' };
     } catch (error) {
-      switch(error.status) {
+      switch (error.status) {
         case 400:
           throw new HttpException('Invalid artist ID', HttpStatus.BAD_REQUEST);
         case 404:
-          throw new HttpException('Artist does not exist', HttpStatus.UNPROCESSABLE_ENTITY);
+          throw new HttpException(
+            'Artist does not exist',
+            HttpStatus.UNPROCESSABLE_ENTITY,
+          );
       }
     }
   }
@@ -70,11 +79,14 @@ export class FavoritesService {
 
       return { message: 'Album was successfully added to Favorites' };
     } catch (error) {
-      switch(error.status) {
+      switch (error.status) {
         case 400:
           throw new HttpException('Invalid album ID', HttpStatus.BAD_REQUEST);
         case 404:
-          throw new HttpException('Album does not exist', HttpStatus.UNPROCESSABLE_ENTITY);
+          throw new HttpException(
+            'Album does not exist',
+            HttpStatus.UNPROCESSABLE_ENTITY,
+          );
       }
     }
   }
@@ -87,11 +99,14 @@ export class FavoritesService {
 
       return { message: 'Track was successfully added to Favorites' };
     } catch (error) {
-      switch(error.status) {
+      switch (error.status) {
         case 400:
           throw new HttpException('Invalid track ID', HttpStatus.BAD_REQUEST);
         case 404:
-          throw new HttpException('Track does not exist', HttpStatus.UNPROCESSABLE_ENTITY);
+          throw new HttpException(
+            'Track does not exist',
+            HttpStatus.UNPROCESSABLE_ENTITY,
+          );
       }
     }
   }
@@ -101,10 +116,15 @@ export class FavoritesService {
       throw new HttpException('Invalid artist ID', HttpStatus.BAD_REQUEST);
     }
 
-    const artistIndex = this.db.favorites.artists.findIndex((artistId) => artistId === id);
+    const artistIndex = this.db.favorites.artists.findIndex(
+      (artistId) => artistId === id,
+    );
 
     if (!artistIndex && !isDeleted) {
-      throw new HttpException('Artist is not in Favorites', HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        'Artist is not in Favorites',
+        HttpStatus.NOT_FOUND,
+      );
     } else if (artistIndex >= 0) {
       this.db.favorites.artists.splice(artistIndex, 1);
     }
@@ -117,10 +137,15 @@ export class FavoritesService {
       throw new HttpException('Invalid album ID', HttpStatus.BAD_REQUEST);
     }
 
-    const albumIndex = this.db.favorites.albums.findIndex((albumId) => albumId === id);
+    const albumIndex = this.db.favorites.albums.findIndex(
+      (albumId) => albumId === id,
+    );
 
     if (!albumIndex && !isDeleted) {
-      throw new HttpException('Album is not in Favorites', HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        'Album is not in Favorites',
+        HttpStatus.NOT_FOUND,
+      );
     } else if (albumIndex >= 0) {
       this.db.favorites.albums.splice(albumIndex, 1);
     }
@@ -133,10 +158,15 @@ export class FavoritesService {
       throw new HttpException('Invalid track ID', HttpStatus.BAD_REQUEST);
     }
 
-    const trackIndex = this.db.favorites.tracks.findIndex((trackId) => trackId === id);
+    const trackIndex = this.db.favorites.tracks.findIndex(
+      (trackId) => trackId === id,
+    );
 
     if (!trackIndex && !isDeleted) {
-      throw new HttpException('Track is not in Favorites', HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        'Track is not in Favorites',
+        HttpStatus.NOT_FOUND,
+      );
     } else if (trackIndex >= 0) {
       this.db.favorites.tracks.splice(trackIndex, 1);
     }

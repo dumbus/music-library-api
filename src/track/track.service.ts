@@ -1,4 +1,10 @@
-import { Injectable, Inject, forwardRef, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  Injectable,
+  Inject,
+  forwardRef,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { v4 as uuidv4, validate as uuidValidate } from 'uuid';
 
 import { DbService } from 'src/db/db.service';
@@ -10,10 +16,10 @@ import { UpdateTrackDto } from './dto/update-track.dto';
 export class TrackService {
   constructor(
     private db: DbService,
-    
+
     @Inject(forwardRef(() => FavoritesService))
     private favoritesService: FavoritesService,
-    ) {}
+  ) {}
 
   getAll() {
     return this.db.tracks;

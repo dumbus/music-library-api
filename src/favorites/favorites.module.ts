@@ -9,11 +9,11 @@ import { FavoritesController } from './favorites.controller';
 
 @Module({
   imports: [
-  DbModule,
-  forwardRef(() => ArtistModule),
-  forwardRef(() => AlbumModule),
-  forwardRef(() => TrackModule),
-],
+    DbModule,
+    forwardRef(() => ArtistModule),
+    forwardRef(() => AlbumModule),
+    forwardRef(() => TrackModule),
+  ],
   controllers: [FavoritesController],
   providers: [FavoritesService],
   exports: [FavoritesService],
