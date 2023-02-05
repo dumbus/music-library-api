@@ -7,8 +7,8 @@ import {
 } from '@nestjs/common';
 import { v4 as uuidv4, validate as uuidValidate } from 'uuid';
 
-import { DbService } from 'src/db/db.service';
-import { FavoritesService } from 'src/favorites/favorites.service';
+import { DbService } from '../../db/db.service';
+import { FavoritesService } from '../favorites/favorites.service';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 
