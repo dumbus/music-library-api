@@ -1,15 +1,5 @@
-import { IsString, IsNumber, IsNotEmpty, ValidateIf } from 'class-validator';
+import { PartialType } from '@nestjs/mapped-types';
 
-export class UpdateAlbumDto {
-  @IsNotEmpty()
-  @IsString()
-  name: string;
+import { CreateAlbumDto } from './create-album.dto';
 
-  @IsNotEmpty()
-  @IsNumber()
-  year: number;
-
-  @IsString()
-  @ValidateIf((value) => value === null)
-  artistId: string | null;
-}
+export class UpdateAlbumDto extends PartialType(CreateAlbumDto) {}
