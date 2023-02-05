@@ -3,6 +3,7 @@ import { v4 as uuidv4, validate as uuidValidate } from 'uuid';
 
 import { DbService } from 'src/db/db.service';
 import { TrackService } from 'src/track/track.service';
+import { FavoritesService } from 'src/favorites/favorites.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 
@@ -12,7 +13,9 @@ export class AlbumService {
     private db: DbService,
     
     @Inject(forwardRef(() => TrackService))
-    private trackService: TrackService,  
+    private trackService: TrackService,
+    @Inject(forwardRef(() => FavoritesService))
+    private favoritesService: FavoritesService,
   ) {}
 
   getAll() {
@@ -72,6 +75,7 @@ export class AlbumService {
     this.db.albums.splice(albumIndex, 1);
 
     this.trackService.removeAlbum(id);
+    this.favoritesService.removeAlbum(id, true);
 
     return null;
   }
