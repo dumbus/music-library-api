@@ -35,8 +35,6 @@ export class AlbumService {
 
     const album = this.db.albums.find((album) => album.id === id);
 
-    console.log(album);
-
     if (!album) {
       throw new HttpException('Album was not found', HttpStatus.NOT_FOUND);
     }
