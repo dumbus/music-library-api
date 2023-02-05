@@ -45,8 +45,6 @@ export class UserService {
     const userId = uuidv4();
     const dateNow = Date.now();
 
-    console.log(createUserDto);
-
     const user = {
       id: userId,
       version: 1,
@@ -79,8 +77,6 @@ export class UserService {
     delete updatedUser.password;
 
     return updatedUser;
-
-    return user;
   }
 
   delete(id: string) {
