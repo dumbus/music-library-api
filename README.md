@@ -1,6 +1,6 @@
 # Home Library Service
 
-[Assignment](https://github.com/AlreadyBored/nodejs-assignments/blob/main/assignments/rest-service/assignment.md)
+[Assignment](https://github.com/AlreadyBored/nodejs-assignments/blob/main/assignments/rest-service/assignment.md)  
 [Scoring](https://github.com/AlreadyBored/nodejs-assignments/blob/main/assignments/rest-service/score.md)
 
 ## Prerequisites
