@@ -2,6 +2,7 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { v4 as uuidv4, validate as uuidValidate } from 'uuid';
 
 import { DbService } from '../../db/db.service';
+import { User } from './interfaces/user.interface';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
@@ -10,10 +11,18 @@ export class UserService {
   constructor(private db: DbService) {}
 
   getAll() {
-    return this.db.users;
+    const users = this.db.users;
+
+    const usersToResponse = users.map((user) => {
+      const userToResponse = this.toRequest(user);
+
+      return userToResponse;
+    });
+
+    return usersToResponse;
   }
 
-  getById(id: string) {
+  getById(id: string, isPasswordIncluded = false) {
     if (!uuidValidate(id)) {
       throw new HttpException('Invalid user ID', HttpStatus.BAD_REQUEST);
     }
@@ -22,6 +31,12 @@ export class UserService {
 
     if (!user) {
       throw new HttpException('User was not found', HttpStatus.NOT_FOUND);
+    }
+
+    if (!isPasswordIncluded) {
+      const userToResponse = this.toRequest(user);
+
+      return userToResponse;
     }
 
     return user;
@@ -54,15 +69,14 @@ export class UserService {
     };
     this.db.users.push(user);
 
-    const newUser = { ...user };
-    delete newUser.password;
+    const userToResponse = this.toRequest(user);
 
-    return newUser;
+    return userToResponse;
   }
 
   update(id: string, updateUserDto: UpdateUserDto) {
     const { oldPassword, newPassword } = updateUserDto;
-    const user = this.getById(id);
+    const user = this.getById(id, true);
 
     if (user.password !== oldPassword) {
       throw new HttpException('Password is incorrect', HttpStatus.FORBIDDEN);
@@ -73,10 +87,9 @@ export class UserService {
     user.updatedAt = dateNow;
     user.password = newPassword;
 
-    const updatedUser = { ...user };
-    delete updatedUser.password;
+    const userToResponse = this.toRequest(user);
 
-    return updatedUser;
+    return userToResponse;
   }
 
   delete(id: string) {
@@ -84,5 +97,12 @@ export class UserService {
     this.db.users.splice(userIndex, 1);
 
     return null;
+  }
+
+  toRequest(user: User) {
+    const userToResponse = { ...user };
+    delete userToResponse.password;
+
+    return userToResponse;
   }
 }
