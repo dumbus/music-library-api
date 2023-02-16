@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import * as dotenv from 'dotenv';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -11,6 +12,8 @@ import { TrackModule } from './app/track/track.module';
 import { FavoritesModule } from './app/favorites/favorites.module';
 
 import { UserEntity } from './app/user/entities/user.entity';
+
+dotenv.config();
 
 const {
   POSTGRES_USERNAME,
@@ -36,7 +39,7 @@ const {
       host: POSTGRES_HOST,
       port: Number(POSTGRES_PORT),
       entities: [UserEntity],
-      synchronize: false,
+      synchronize: true,
     }),
   ],
   controllers: [AppController],

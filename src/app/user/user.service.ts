@@ -103,6 +103,7 @@ export class UserService {
 
   async delete(id: string) {
     try {
+      await this.getById(id);
       const deletionResult = await this.userRepository.delete(id);
 
       if (deletionResult) {
@@ -118,6 +119,8 @@ export class UserService {
   toRequest(user: User) {
     const userToResponse = { ...user };
     delete userToResponse.password;
+    userToResponse.createdAt = Number(userToResponse.createdAt);
+    userToResponse.updatedAt = Number(userToResponse.updatedAt);
 
     return userToResponse;
   }
