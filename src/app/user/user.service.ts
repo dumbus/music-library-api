@@ -1,102 +1,118 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { v4 as uuidv4, validate as uuidValidate } from 'uuid';
 
-import { DbService } from '../../db/db.service';
 import { User } from './interfaces/user.interface';
+import { UserEntity } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
-  constructor(private db: DbService) {}
+  constructor(
+    @InjectRepository(UserEntity)
+    private userRepository: Repository<UserEntity>,
+  ) {}
 
-  getAll() {
-    const users = this.db.users;
+  async getAll() {
+    try {
+      const users = await this.userRepository.find();
 
-    const usersToResponse = users.map((user) => {
+      const usersToResponse = users.map((user) => {
+        const userToResponse = this.toRequest(user);
+
+        return userToResponse;
+      });
+
+      return usersToResponse;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getById(id: string, isPasswordIncluded = false) {
+    try {
+      if (!uuidValidate(id)) {
+        throw new HttpException('Invalid user ID', HttpStatus.BAD_REQUEST);
+      }
+
+      const user = await this.userRepository.findOne({ where: { id } });
+
+      if (!user) {
+        throw new HttpException('User was not found', HttpStatus.NOT_FOUND);
+      }
+
+      if (!isPasswordIncluded) {
+        const userToResponse = this.toRequest(user);
+
+        return userToResponse;
+      }
+
+      return user;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async create(createUserDto: CreateUserDto) {
+    try {
+      const userId = uuidv4();
+      const dateNow = Date.now();
+
+      const user = {
+        id: userId,
+        version: 1,
+        createdAt: dateNow,
+        updatedAt: dateNow,
+        ...createUserDto,
+      };
+      await this.userRepository.save(user);
+
       const userToResponse = this.toRequest(user);
 
       return userToResponse;
-    });
-
-    return usersToResponse;
+    } catch (error) {
+      throw error;
+    }
   }
 
-  getById(id: string, isPasswordIncluded = false) {
-    if (!uuidValidate(id)) {
-      throw new HttpException('Invalid user ID', HttpStatus.BAD_REQUEST);
-    }
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    try {
+      const { oldPassword, newPassword } = updateUserDto;
+      const user = await this.getById(id, true);
 
-    const user = this.db.users.find((user) => user.id === id);
+      if (user.password !== oldPassword) {
+        throw new HttpException('Password is incorrect', HttpStatus.FORBIDDEN);
+      }
+      const dateNow = Date.now();
 
-    if (!user) {
-      throw new HttpException('User was not found', HttpStatus.NOT_FOUND);
-    }
+      user.version += 1;
+      user.updatedAt = dateNow;
+      user.password = newPassword;
 
-    if (!isPasswordIncluded) {
+      await this.userRepository.save(user);
+
       const userToResponse = this.toRequest(user);
 
       return userToResponse;
+    } catch (error) {
+      throw error;
     }
-
-    return user;
   }
 
-  getIndexById(id: string) {
-    if (!uuidValidate(id)) {
-      throw new HttpException('Invalid user ID', HttpStatus.BAD_REQUEST);
+  async delete(id: string) {
+    try {
+      const deletionResult = await this.userRepository.delete(id);
+
+      if (deletionResult) {
+        return null;
+      } else {
+        throw new HttpException('User was not found', HttpStatus.NOT_FOUND);
+      }
+    } catch (error) {
+      throw error;
     }
-
-    const userIndex = this.db.users.findIndex((user) => user.id === id);
-
-    if (userIndex === -1) {
-      throw new HttpException('User was not found', HttpStatus.NOT_FOUND);
-    }
-
-    return userIndex;
-  }
-
-  create(createUserDto: CreateUserDto) {
-    const userId = uuidv4();
-    const dateNow = Date.now();
-
-    const user = {
-      id: userId,
-      version: 1,
-      createdAt: dateNow,
-      updatedAt: dateNow,
-      ...createUserDto,
-    };
-    this.db.users.push(user);
-
-    const userToResponse = this.toRequest(user);
-
-    return userToResponse;
-  }
-
-  update(id: string, updateUserDto: UpdateUserDto) {
-    const { oldPassword, newPassword } = updateUserDto;
-    const user = this.getById(id, true);
-
-    if (user.password !== oldPassword) {
-      throw new HttpException('Password is incorrect', HttpStatus.FORBIDDEN);
-    }
-    const dateNow = Date.now();
-
-    user.version += 1;
-    user.updatedAt = dateNow;
-    user.password = newPassword;
-
-    const userToResponse = this.toRequest(user);
-
-    return userToResponse;
-  }
-
-  delete(id: string) {
-    const userIndex = this.getIndexById(id);
-    this.db.users.splice(userIndex, 1);
-
-    return null;
   }
 
   toRequest(user: User) {
