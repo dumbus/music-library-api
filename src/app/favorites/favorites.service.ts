@@ -71,45 +71,45 @@ export class FavoritesService {
   //   }
   // }
 
-  addAlbum(id: string) {
-    try {
-      const album = this.albumService.getById(id);
-      const albumId = album.id;
-      this.db.favorites.albums.push(albumId);
+  // addAlbum(id: string) {
+  //   try {
+  //     const album = this.albumService.getById(id);
+  //     const albumId = album.id;
+  //     this.db.favorites.albums.push(albumId);
 
-      return { message: 'Album was successfully added to Favorites' };
-    } catch (error) {
-      switch (error.status) {
-        case 400:
-          throw new HttpException('Invalid album ID', HttpStatus.BAD_REQUEST);
-        case 404:
-          throw new HttpException(
-            'Album does not exist',
-            HttpStatus.UNPROCESSABLE_ENTITY,
-          );
-      }
-    }
-  }
+  //     return { message: 'Album was successfully added to Favorites' };
+  //   } catch (error) {
+  //     switch (error.status) {
+  //       case 400:
+  //         throw new HttpException('Invalid album ID', HttpStatus.BAD_REQUEST);
+  //       case 404:
+  //         throw new HttpException(
+  //           'Album does not exist',
+  //           HttpStatus.UNPROCESSABLE_ENTITY,
+  //         );
+  //     }
+  //   }
+  // }
 
-  addTrack(id: string) {
-    try {
-      const track = this.trackService.getById(id);
-      const trackId = track.id;
-      this.db.favorites.tracks.push(trackId);
+  // addTrack(id: string) {
+  //   try {
+  //     const track = this.trackService.getById(id);
+  //     const trackId = track.id;
+  //     this.db.favorites.tracks.push(trackId);
 
-      return { message: 'Track was successfully added to Favorites' };
-    } catch (error) {
-      switch (error.status) {
-        case 400:
-          throw new HttpException('Invalid track ID', HttpStatus.BAD_REQUEST);
-        case 404:
-          throw new HttpException(
-            'Track does not exist',
-            HttpStatus.UNPROCESSABLE_ENTITY,
-          );
-      }
-    }
-  }
+  //     return { message: 'Track was successfully added to Favorites' };
+  //   } catch (error) {
+  //     switch (error.status) {
+  //       case 400:
+  //         throw new HttpException('Invalid track ID', HttpStatus.BAD_REQUEST);
+  //       case 404:
+  //         throw new HttpException(
+  //           'Track does not exist',
+  //           HttpStatus.UNPROCESSABLE_ENTITY,
+  //         );
+  //     }
+  //   }
+  // }
 
   // removeArtist(id: string, isDeleted = false) {
   //   if (!uuidValidate(id)) {
@@ -132,45 +132,45 @@ export class FavoritesService {
   //   return null;
   // }
 
-  removeAlbum(id: string, isDeleted = false) {
-    if (!uuidValidate(id)) {
-      throw new HttpException('Invalid album ID', HttpStatus.BAD_REQUEST);
-    }
+  // removeAlbum(id: string, isDeleted = false) {
+  //   if (!uuidValidate(id)) {
+  //     throw new HttpException('Invalid album ID', HttpStatus.BAD_REQUEST);
+  //   }
 
-    const albumIndex = this.db.favorites.albums.findIndex(
-      (albumId) => albumId === id,
-    );
+  //   const albumIndex = this.db.favorites.albums.findIndex(
+  //     (albumId) => albumId === id,
+  //   );
 
-    if (!albumIndex && !isDeleted) {
-      throw new HttpException(
-        'Album is not in Favorites',
-        HttpStatus.NOT_FOUND,
-      );
-    } else if (albumIndex >= 0) {
-      this.db.favorites.albums.splice(albumIndex, 1);
-    }
+  //   if (!albumIndex && !isDeleted) {
+  //     throw new HttpException(
+  //       'Album is not in Favorites',
+  //       HttpStatus.NOT_FOUND,
+  //     );
+  //   } else if (albumIndex >= 0) {
+  //     this.db.favorites.albums.splice(albumIndex, 1);
+  //   }
 
-    return null;
-  }
+  //   return null;
+  // }
 
-  removeTrack(id: string, isDeleted = false) {
-    if (!uuidValidate(id)) {
-      throw new HttpException('Invalid track ID', HttpStatus.BAD_REQUEST);
-    }
+  // removeTrack(id: string, isDeleted = false) {
+  //   if (!uuidValidate(id)) {
+  //     throw new HttpException('Invalid track ID', HttpStatus.BAD_REQUEST);
+  //   }
 
-    const trackIndex = this.db.favorites.tracks.findIndex(
-      (trackId) => trackId === id,
-    );
+  //   const trackIndex = this.db.favorites.tracks.findIndex(
+  //     (trackId) => trackId === id,
+  //   );
 
-    if (!trackIndex && !isDeleted) {
-      throw new HttpException(
-        'Track is not in Favorites',
-        HttpStatus.NOT_FOUND,
-      );
-    } else if (trackIndex >= 0) {
-      this.db.favorites.tracks.splice(trackIndex, 1);
-    }
+  //   if (!trackIndex && !isDeleted) {
+  //     throw new HttpException(
+  //       'Track is not in Favorites',
+  //       HttpStatus.NOT_FOUND,
+  //     );
+  //   } else if (trackIndex >= 0) {
+  //     this.db.favorites.tracks.splice(trackIndex, 1);
+  //   }
 
-    return null;
-  }
+  //   return null;
+  // }
 }

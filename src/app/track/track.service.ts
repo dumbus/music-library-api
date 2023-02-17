@@ -76,7 +76,7 @@ export class TrackService {
     const trackIndex = this.getIndexById(id);
     this.db.tracks.splice(trackIndex, 1);
 
-    this.favoritesService.removeTrack(id, true);
+    // this.favoritesService.removeTrack(id, true);
 
     return null;
   }

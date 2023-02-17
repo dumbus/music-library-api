@@ -1,6 +1,7 @@
 import { Module, forwardRef } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { DbModule } from '../../db/db.module';
+import { AlbumEntity } from './entities/album.entity';
 import { TrackModule } from '../track/track.module';
 import { FavoritesModule } from '../favorites/favorites.module';
 import { AlbumController } from './album.controller';
@@ -8,7 +9,7 @@ import { AlbumService } from './album.service';
 
 @Module({
   imports: [
-    DbModule,
+    TypeOrmModule.forFeature([AlbumEntity]),
     forwardRef(() => TrackModule),
     forwardRef(() => FavoritesModule),
   ],
