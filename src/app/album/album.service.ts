@@ -10,7 +10,6 @@ import { Repository } from 'typeorm';
 import { v4 as uuidv4, validate as uuidValidate } from 'uuid';
 
 import { AlbumEntity } from './entities/album.entity';
-import { TrackService } from '../track/track.service';
 import { FavoritesService } from '../favorites/favorites.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
@@ -21,8 +20,6 @@ export class AlbumService {
     @InjectRepository(AlbumEntity)
     private albumRepository: Repository<AlbumEntity>,
 
-    @Inject(forwardRef(() => TrackService))
-    private trackService: TrackService,
     @Inject(forwardRef(() => FavoritesService))
     private favoritesService: FavoritesService,
   ) {}
@@ -92,26 +89,9 @@ export class AlbumService {
         throw new HttpException('Artist was not found', HttpStatus.NOT_FOUND);
       }
 
-      // this.trackService.removeAlbum(id);
       // this.favoritesService.removeAlbum(id, true);
-
-      // return null;
     } catch (error) {
       throw error;
     }
   }
-
-  // removeArtist(artistId: string) {
-  //   const oldAlbums = this.getAll();
-
-  //   const newAlbums = oldAlbums.map((album) => {
-  //     if (album.artistId === artistId) {
-  //       album.artistId = null;
-  //     }
-
-  //     return album;
-  //   });
-
-  //   this.db.albums = newAlbums;
-  // }
 }

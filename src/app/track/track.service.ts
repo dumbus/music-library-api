@@ -89,38 +89,8 @@ export class TrackService {
       } else {
         throw new HttpException('Artist was not found', HttpStatus.NOT_FOUND);
       }
-
-      // this.favoritesService.removeTrack(id, true);
     } catch (error) {
       throw error;
     }
   }
-
-  // removeArtist(artistId: string) {
-  //   const oldTracks = this.getAll();
-
-  //   const newTracks = oldTracks.map((track) => {
-  //     if (track.artistId === artistId) {
-  //       track.artistId = null;
-  //     }
-
-  //     return track;
-  //   });
-
-  //   this.db.tracks = newTracks;
-  // }
-
-  // removeAlbum(albumId: string) {
-  //   const oldTracks = this.getAll();
-
-  //   const newTracks = oldTracks.map((track) => {
-  //     if (track.albumId === albumId) {
-  //       track.albumId = null;
-  //     }
-
-  //     return track;
-  //   });
-
-  //   this.db.tracks = newTracks;
-  // }
 }

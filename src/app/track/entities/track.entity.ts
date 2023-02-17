@@ -1,4 +1,14 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  JoinColumn,
+  Relation,
+} from 'typeorm';
+
+import { ArtistEntity } from 'src/app/artist/entities/artist.entity';
+import { AlbumEntity } from 'src/app/album/entities/album.entity';
 
 @Entity('track')
 export class TrackEntity {
@@ -11,9 +21,17 @@ export class TrackEntity {
   @Column({ type: 'integer' })
   duration: number;
 
-  @Column({ type: 'uuid', nullable: true })
-  artistId: string;
+  @ManyToOne(() => ArtistEntity, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn()
+  artist: Relation<ArtistEntity>;
 
   @Column({ type: 'uuid', nullable: true })
-  albumId: string;
+  artistId: ArtistEntity['id'] | null;
+
+  @ManyToOne(() => AlbumEntity, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn()
+  album: Relation<AlbumEntity>;
+
+  @Column({ type: 'uuid', nullable: true })
+  albumId: AlbumEntity['id'] | null;
 }

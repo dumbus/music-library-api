@@ -1,4 +1,13 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  JoinColumn,
+  Relation,
+} from 'typeorm';
+
+import { ArtistEntity } from 'src/app/artist/entities/artist.entity';
 
 @Entity('album')
 export class AlbumEntity {
@@ -11,6 +20,10 @@ export class AlbumEntity {
   @Column({ type: 'integer' })
   year: number;
 
+  @ManyToOne(() => ArtistEntity, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn()
+  artist: Relation<ArtistEntity>;
+
   @Column({ type: 'uuid', nullable: true })
-  artistId: string;
+  artistId: ArtistEntity['id'] | null;
 }
