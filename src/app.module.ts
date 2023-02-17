@@ -14,6 +14,7 @@ import { FavoritesModule } from './app/favorites/favorites.module';
 import { UserEntity } from './app/user/entities/user.entity';
 import { ArtistEntity } from './app/artist/entities/artist.entity';
 import { AlbumEntity } from './app/album/entities/album.entity';
+import { TrackEntity } from './app/track/entities/track.entity';
 
 dotenv.config();
 
@@ -40,7 +41,7 @@ const {
       database: POSTGRES_DATABASE,
       host: POSTGRES_HOST,
       port: Number(POSTGRES_PORT),
-      entities: [UserEntity, ArtistEntity, AlbumEntity],
+      entities: [UserEntity, ArtistEntity, AlbumEntity, TrackEntity],
       synchronize: true,
     }),
   ],

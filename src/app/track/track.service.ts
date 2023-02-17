@@ -5,9 +5,11 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { v4 as uuidv4, validate as uuidValidate } from 'uuid';
 
-import { DbService } from '../../db/db.service';
+import { TrackEntity } from './entities/track.entity';
 import { FavoritesService } from '../favorites/favorites.service';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
@@ -15,97 +17,110 @@ import { UpdateTrackDto } from './dto/update-track.dto';
 @Injectable()
 export class TrackService {
   constructor(
-    private db: DbService,
+    @InjectRepository(TrackEntity)
+    private trackRepository: Repository<TrackEntity>,
 
     @Inject(forwardRef(() => FavoritesService))
     private favoritesService: FavoritesService,
   ) {}
 
-  getAll() {
-    return this.db.tracks;
-  }
-
-  getById(id: string) {
-    if (!uuidValidate(id)) {
-      throw new HttpException('Invalid track ID', HttpStatus.BAD_REQUEST);
+  async getAll() {
+    try {
+      return await this.trackRepository.find();
+    } catch (error) {
+      throw error;
     }
-
-    const track = this.db.tracks.find((track) => track.id === id);
-
-    if (!track) {
-      throw new HttpException('Track was not found', HttpStatus.NOT_FOUND);
-    }
-
-    return track;
   }
 
-  getIndexById(id: string) {
-    if (!uuidValidate(id)) {
-      throw new HttpException('Invalid track ID', HttpStatus.BAD_REQUEST);
-    }
+  async getById(id: string) {
+    try {
+      if (!uuidValidate(id)) {
+        throw new HttpException('Invalid track ID', HttpStatus.BAD_REQUEST);
+      }
 
-    const trackIndex = this.db.tracks.findIndex((track) => track.id === id);
+      const track = await this.trackRepository.findOne({ where: { id } });
 
-    if (trackIndex === -1) {
-      throw new HttpException('Track was not found', HttpStatus.NOT_FOUND);
-    }
-
-    return trackIndex;
-  }
-
-  create(createTrackDto: CreateTrackDto) {
-    const trackId = uuidv4();
-    const track = { id: trackId, ...createTrackDto };
-    this.db.tracks.push(track);
-
-    return track;
-  }
-
-  update(id: string, updateTrackDto: UpdateTrackDto) {
-    const { name, duration, artistId, albumId } = updateTrackDto;
-    const track = this.getById(id);
-    track.name = name;
-    track.duration = duration;
-    track.artistId = artistId;
-    track.albumId = albumId;
-
-    return track;
-  }
-
-  delete(id: string) {
-    const trackIndex = this.getIndexById(id);
-    this.db.tracks.splice(trackIndex, 1);
-
-    // this.favoritesService.removeTrack(id, true);
-
-    return null;
-  }
-
-  removeArtist(artistId: string) {
-    const oldTracks = this.getAll();
-
-    const newTracks = oldTracks.map((track) => {
-      if (track.artistId === artistId) {
-        track.artistId = null;
+      if (!track) {
+        throw new HttpException('Track was not found', HttpStatus.NOT_FOUND);
       }
 
       return track;
-    });
-
-    this.db.tracks = newTracks;
+    } catch (error) {
+      throw error;
+    }
   }
 
-  removeAlbum(albumId: string) {
-    const oldTracks = this.getAll();
-
-    const newTracks = oldTracks.map((track) => {
-      if (track.albumId === albumId) {
-        track.albumId = null;
-      }
+  async create(createTrackDto: CreateTrackDto) {
+    try {
+      const trackId = uuidv4();
+      const track = { id: trackId, ...createTrackDto };
+      await this.trackRepository.save(track);
 
       return track;
-    });
-
-    this.db.tracks = newTracks;
+    } catch (error) {
+      throw error;
+    }
   }
+
+  async update(id: string, updateTrackDto: UpdateTrackDto) {
+    try {
+      const { name, duration, artistId, albumId } = updateTrackDto;
+      const track = await this.getById(id);
+      track.name = name;
+      track.duration = duration;
+      track.artistId = artistId;
+      track.albumId = albumId;
+
+      await this.trackRepository.save(track);
+
+      return track;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async delete(id: string) {
+    try {
+      await this.getById(id);
+      const deletionResult = await this.trackRepository.delete(id);
+
+      if (deletionResult) {
+        return null;
+      } else {
+        throw new HttpException('Artist was not found', HttpStatus.NOT_FOUND);
+      }
+
+      // this.favoritesService.removeTrack(id, true);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // removeArtist(artistId: string) {
+  //   const oldTracks = this.getAll();
+
+  //   const newTracks = oldTracks.map((track) => {
+  //     if (track.artistId === artistId) {
+  //       track.artistId = null;
+  //     }
+
+  //     return track;
+  //   });
+
+  //   this.db.tracks = newTracks;
+  // }
+
+  // removeAlbum(albumId: string) {
+  //   const oldTracks = this.getAll();
+
+  //   const newTracks = oldTracks.map((track) => {
+  //     if (track.albumId === albumId) {
+  //       track.albumId = null;
+  //     }
+
+  //     return track;
+  //   });
+
+  //   this.db.tracks = newTracks;
+  // }
 }
