@@ -51,25 +51,25 @@ export class FavoritesService {
     };
   }
 
-  addArtist(id: string) {
-    try {
-      const artist = this.artistService.getById(id);
-      const artistId = artist.id;
-      this.db.favorites.artists.push(artistId);
+  // addArtist(id: string) {
+  //   try {
+  //     const artist = this.artistService.getById(id);
+  //     const artistId = artist.id;
+  //     this.db.favorites.artists.push(artistId);
 
-      return { message: 'Artist was successfully added to Favorites' };
-    } catch (error) {
-      switch (error.status) {
-        case 400:
-          throw new HttpException('Invalid artist ID', HttpStatus.BAD_REQUEST);
-        case 404:
-          throw new HttpException(
-            'Artist does not exist',
-            HttpStatus.UNPROCESSABLE_ENTITY,
-          );
-      }
-    }
-  }
+  //     return { message: 'Artist was successfully added to Favorites' };
+  //   } catch (error) {
+  //     switch (error.status) {
+  //       case 400:
+  //         throw new HttpException('Invalid artist ID', HttpStatus.BAD_REQUEST);
+  //       case 404:
+  //         throw new HttpException(
+  //           'Artist does not exist',
+  //           HttpStatus.UNPROCESSABLE_ENTITY,
+  //         );
+  //     }
+  //   }
+  // }
 
   addAlbum(id: string) {
     try {
@@ -111,26 +111,26 @@ export class FavoritesService {
     }
   }
 
-  removeArtist(id: string, isDeleted = false) {
-    if (!uuidValidate(id)) {
-      throw new HttpException('Invalid artist ID', HttpStatus.BAD_REQUEST);
-    }
+  // removeArtist(id: string, isDeleted = false) {
+  //   if (!uuidValidate(id)) {
+  //     throw new HttpException('Invalid artist ID', HttpStatus.BAD_REQUEST);
+  //   }
 
-    const artistIndex = this.db.favorites.artists.findIndex(
-      (artistId) => artistId === id,
-    );
+  //   const artistIndex = this.db.favorites.artists.findIndex(
+  //     (artistId) => artistId === id,
+  //   );
 
-    if (!artistIndex && !isDeleted) {
-      throw new HttpException(
-        'Artist is not in Favorites',
-        HttpStatus.NOT_FOUND,
-      );
-    } else if (artistIndex >= 0) {
-      this.db.favorites.artists.splice(artistIndex, 1);
-    }
+  //   if (!artistIndex && !isDeleted) {
+  //     throw new HttpException(
+  //       'Artist is not in Favorites',
+  //       HttpStatus.NOT_FOUND,
+  //     );
+  //   } else if (artistIndex >= 0) {
+  //     this.db.favorites.artists.splice(artistIndex, 1);
+  //   }
 
-    return null;
-  }
+  //   return null;
+  // }
 
   removeAlbum(id: string, isDeleted = false) {
     if (!uuidValidate(id)) {

@@ -5,9 +5,11 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { v4 as uuidv4, validate as uuidValidate } from 'uuid';
 
-import { DbService } from '../../db/db.service';
+import { ArtistEntity } from './entities/artist.entity';
 import { AlbumService } from '../album/album.service';
 import { TrackService } from '../track/track.service';
 import { FavoritesService } from '../favorites/favorites.service';
@@ -17,7 +19,8 @@ import { UpdateArtistDto } from './dto/update-artist.dto';
 @Injectable()
 export class ArtistService {
   constructor(
-    private db: DbService,
+    @InjectRepository(ArtistEntity)
+    private artistRepository: Repository<ArtistEntity>,
 
     @Inject(forwardRef(() => AlbumService))
     private albumService: AlbumService,
@@ -27,63 +30,75 @@ export class ArtistService {
     private favoritesService: FavoritesService,
   ) {}
 
-  getAll() {
-    return this.db.artists;
-  }
-
-  getById(id: string) {
-    if (!uuidValidate(id)) {
-      throw new HttpException('Invalid artist ID', HttpStatus.BAD_REQUEST);
+  async getAll() {
+    try {
+      return await this.artistRepository.find();
+    } catch (error) {
+      throw error;
     }
+  }
 
-    const artist = this.db.artists.find((artist) => artist.id === id);
+  async getById(id: string) {
+    try {
+      if (!uuidValidate(id)) {
+        throw new HttpException('Invalid artist ID', HttpStatus.BAD_REQUEST);
+      }
 
-    if (!artist) {
-      throw new HttpException('Artist was not found', HttpStatus.NOT_FOUND);
+      const artist = await this.artistRepository.findOne({ where: { id } });
+
+      if (!artist) {
+        throw new HttpException('Artist was not found', HttpStatus.NOT_FOUND);
+      }
+
+      return artist;
+    } catch (error) {
+      throw error;
     }
-
-    return artist;
   }
 
-  getIndexById(id: string) {
-    if (!uuidValidate(id)) {
-      throw new HttpException('Invalid artist ID', HttpStatus.BAD_REQUEST);
+  async create(createArtistDto: CreateArtistDto) {
+    try {
+      const artistId = uuidv4();
+      const artist = { id: artistId, ...createArtistDto };
+      await this.artistRepository.save(artist);
+
+      return artist;
+    } catch (error) {
+      throw error;
     }
+  }
 
-    const artistIndex = this.db.artists.findIndex((artist) => artist.id === id);
+  async update(id: string, updateArtistDto: UpdateArtistDto) {
+    try {
+      const { name, grammy } = updateArtistDto;
+      const artist = await this.getById(id);
+      artist.name = name;
+      artist.grammy = grammy;
 
-    if (artistIndex === -1) {
-      throw new HttpException('Artist was not found', HttpStatus.NOT_FOUND);
+      await this.artistRepository.save(artist);
+
+      return artist;
+    } catch (error) {
+      throw error;
     }
-
-    return artistIndex;
   }
 
-  create(createArtistDto: CreateArtistDto) {
-    const artistId = uuidv4();
-    const artist = { id: artistId, ...createArtistDto };
-    this.db.artists.push(artist);
+  async delete(id: string) {
+    try {
+      await this.getById(id);
+      const deletionResult = await this.artistRepository.delete(id);
 
-    return artist;
-  }
+      if (deletionResult) {
+        return null;
+      } else {
+        throw new HttpException('Artist was not found', HttpStatus.NOT_FOUND);
+      }
 
-  update(id: string, updateArtistDto: UpdateArtistDto) {
-    const { name, grammy } = updateArtistDto;
-    const artist = this.getById(id);
-    artist.name = name;
-    artist.grammy = grammy;
-
-    return artist;
-  }
-
-  delete(id: string) {
-    const artistIndex = this.getIndexById(id);
-    this.db.artists.splice(artistIndex, 1);
-
-    this.albumService.removeArtist(id);
-    this.trackService.removeArtist(id);
-    this.favoritesService.removeArtist(id, true);
-
-    return null;
+      // this.albumService.removeArtist(id);
+      // this.trackService.removeArtist(id);
+      // this.favoritesService.removeArtist(id, true);
+    } catch (error) {
+      throw error;
+    }
   }
 }
