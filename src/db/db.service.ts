@@ -6,6 +6,9 @@ import { AlbumEntity } from 'src/app/album/entities/album.entity';
 import { ArtistEntity } from 'src/app/artist/entities/artist.entity';
 import { TrackEntity } from 'src/app/track/entities/track.entity';
 import { UserEntity } from 'src/app/user/entities/user.entity';
+import { FavoriteAlbumEntity } from 'src/app/favorites/entities/favoriteAlbum.entity';
+import { FavoriteArtistEntity } from 'src/app/favorites/entities/favoriteArtist.entity';
+import { FavoriteTrackEntity } from 'src/app/favorites/entities/favoriteTrack.entity';
 
 @Injectable()
 export class DbService implements OnModuleInit {
@@ -13,6 +16,9 @@ export class DbService implements OnModuleInit {
   public artists: Repository<ArtistEntity>;
   public tracks: Repository<TrackEntity>;
   public users: Repository<UserEntity>;
+  public favoriteAlbums: Repository<FavoriteAlbumEntity>;
+  public favoriteArtists: Repository<FavoriteArtistEntity>;
+  public favoriteTracks: Repository<FavoriteTrackEntity>;
 
   constructor(
     @InjectRepository(AlbumEntity)
@@ -23,6 +29,12 @@ export class DbService implements OnModuleInit {
     private trackRepository: Repository<TrackEntity>,
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
+    @InjectRepository(FavoriteAlbumEntity)
+    private favoriteAlbumRepository: Repository<FavoriteAlbumEntity>,
+    @InjectRepository(FavoriteArtistEntity)
+    private favoriteArtistRepository: Repository<FavoriteArtistEntity>,
+    @InjectRepository(FavoriteTrackEntity)
+    private favoriteTrackRepository: Repository<FavoriteTrackEntity>,
   ) {}
 
   async onModuleInit() {
@@ -30,15 +42,8 @@ export class DbService implements OnModuleInit {
     this.artists = this.artistRepository;
     this.tracks = this.trackRepository;
     this.users = this.userRepository;
+    this.favoriteAlbums = this.favoriteAlbumRepository;
+    this.favoriteArtists = this.favoriteArtistRepository;
+    this.favoriteTracks = this.favoriteTrackRepository;
   }
-
-  // public albums: Album[] = [];
-  // public artists: Artist[] = [];
-  // public tracks: Track[] = [];
-  // public users: User[] = [];
-  // public favorites: Favorites = {
-  //   albums: [],
-  //   artists: [],
-  //   tracks: [],
-  // };
 }

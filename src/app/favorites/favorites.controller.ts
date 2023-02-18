@@ -14,45 +14,45 @@ import { FavoritesService } from './favorites.service';
 export class FavoritesController {
   constructor(private favoritesService: FavoritesService) {}
 
-  // @Get()
-  // @HttpCode(HttpStatus.OK)
-  // getAll() {
-  //   return this.favoritesService.getAll();
-  // }
+  @Get()
+  @HttpCode(HttpStatus.OK)
+  getAll() {
+    return this.favoritesService.getAll();
+  }
 
-  // @Post('/artist/:id')
-  // @HttpCode(HttpStatus.CREATED)
-  // addArtist(@Param('id') id: string) {
-  //   return this.favoritesService.addArtist(id);
-  // }
+  @Post('/artist/:id')
+  @HttpCode(HttpStatus.CREATED)
+  addArtist(@Param('id') id: string) {
+    return this.favoritesService.addArtist(id);
+  }
 
-  // @Post('/album/:id')
-  // @HttpCode(HttpStatus.CREATED)
-  // addAlbum(@Param('id') id: string) {
-  //   return this.favoritesService.addAlbum(id);
-  // }
+  @Post('/album/:id')
+  @HttpCode(HttpStatus.CREATED)
+  addAlbum(@Param('id') id: string) {
+    return this.favoritesService.addAlbum(id);
+  }
 
-  // @Post('/track/:id')
-  // @HttpCode(HttpStatus.CREATED)
-  // addTrack(@Param('id') id: string) {
-  //   return this.favoritesService.addTrack(id);
-  // }
+  @Post('/track/:id')
+  @HttpCode(HttpStatus.CREATED)
+  addTrack(@Param('id') id: string) {
+    return this.favoritesService.addTrack(id);
+  }
 
-  // @Delete('/artist/:id')
-  // @HttpCode(HttpStatus.NO_CONTENT)
-  // removeArtist(@Param('id') id: string) {
-  //   return this.favoritesService.removeArtist(id, false);
-  // }
+  @Delete('/artist/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  removeArtist(@Param('id') id: string) {
+    return this.favoritesService.removeArtist(id);
+  }
 
-  // @Delete('/album/:id')
-  // @HttpCode(HttpStatus.NO_CONTENT)
-  // removeAlbum(@Param('id') id: string) {
-  //   return this.favoritesService.removeAlbum(id, false);
-  // }
+  @Delete('/album/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  removeAlbum(@Param('id') id: string) {
+    return this.favoritesService.removeAlbum(id);
+  }
 
-  // @Delete('/track/:id')
-  // @HttpCode(HttpStatus.NO_CONTENT)
-  // removeTrack(@Param('id') id: string) {
-  //   return this.favoritesService.removeTrack(id, false);
-  // }
+  @Delete('/track/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  removeTrack(@Param('id') id: string) {
+    return this.favoritesService.removeTrack(id);
+  }
 }

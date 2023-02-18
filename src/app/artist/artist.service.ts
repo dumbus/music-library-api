@@ -1,25 +1,13 @@
-import {
-  Injectable,
-  Inject,
-  forwardRef,
-  HttpException,
-  HttpStatus,
-} from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { v4 as uuidv4, validate as uuidValidate } from 'uuid';
 
 import { DbService } from 'src/db/db.service';
-import { FavoritesService } from '../favorites/favorites.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 
 @Injectable()
 export class ArtistService {
-  constructor(
-    private db: DbService,
-
-    @Inject(forwardRef(() => FavoritesService))
-    private favoritesService: FavoritesService,
-  ) {}
+  constructor(private db: DbService) {}
 
   async getAll() {
     try {
@@ -84,8 +72,6 @@ export class ArtistService {
       } else {
         throw new HttpException('Artist was not found', HttpStatus.NOT_FOUND);
       }
-
-      // this.favoritesService.removeArtist(id, true);
     } catch (error) {
       throw error;
     }

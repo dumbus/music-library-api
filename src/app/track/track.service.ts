@@ -1,25 +1,13 @@
-import {
-  Injectable,
-  Inject,
-  forwardRef,
-  HttpException,
-  HttpStatus,
-} from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { v4 as uuidv4, validate as uuidValidate } from 'uuid';
 
 import { DbService } from 'src/db/db.service';
-import { FavoritesService } from '../favorites/favorites.service';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 
 @Injectable()
 export class TrackService {
-  constructor(
-    private db: DbService,
-
-    @Inject(forwardRef(() => FavoritesService))
-    private favoritesService: FavoritesService,
-  ) {}
+  constructor(private db: DbService) {}
 
   async getAll() {
     try {
