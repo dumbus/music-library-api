@@ -35,5 +35,7 @@ export const typeormConfig = new DataSource({
     FavoriteArtistEntity,
     FavoriteTrackEntity,
   ],
-  synchronize: true,
+  // synchronize: true,
+  migrations: ['./**/migrations/*.js'],
+  migrationsRun: true,
 });
