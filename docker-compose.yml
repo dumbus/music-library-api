@@ -2,12 +2,34 @@ version: '3.8'
 
 services:
   api:
-    build:
-      dockerfile: ./Dockerfile
-      context: .
+    build: .
     container_name: api
-    image: service-rest-api
+    image: rest-service-api
     restart: on-failure
+    depends_on:
+      - postgres
     env_file: .env
     ports:
       - ${PORT}:${PORT}
+    networks:
+      - custom-network
+
+  postgres:
+    build: ./database
+    container_name: postgres
+    image: rest-service-postgres
+    restart: on-failure
+    env_file: .env
+    environment:
+      - POSTGRES_USERNAME=${POSTGRES_USERNAME}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DATABASE=${POSTGRES_DATABASE}
+    hostname: ${POSTGRES_HOST}
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    networks:
+      - custom-network
+
+networks:
+  custom-network:
+    driver: bridge
