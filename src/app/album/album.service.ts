@@ -5,11 +5,9 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { v4 as uuidv4, validate as uuidValidate } from 'uuid';
 
-import { AlbumEntity } from './entities/album.entity';
+import { DbService } from 'src/db/db.service';
 import { FavoritesService } from '../favorites/favorites.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
@@ -17,8 +15,7 @@ import { UpdateAlbumDto } from './dto/update-album.dto';
 @Injectable()
 export class AlbumService {
   constructor(
-    @InjectRepository(AlbumEntity)
-    private albumRepository: Repository<AlbumEntity>,
+    private db: DbService,
 
     @Inject(forwardRef(() => FavoritesService))
     private favoritesService: FavoritesService,
@@ -26,7 +23,7 @@ export class AlbumService {
 
   async getAll() {
     try {
-      return await this.albumRepository.find();
+      return await this.db.albums.find();
     } catch (error) {
       throw error;
     }
@@ -38,7 +35,7 @@ export class AlbumService {
         throw new HttpException('Invalid album ID', HttpStatus.BAD_REQUEST);
       }
 
-      const album = await this.albumRepository.findOne({ where: { id } });
+      const album = await this.db.albums.findOne({ where: { id } });
 
       if (!album) {
         throw new HttpException('Album was not found', HttpStatus.NOT_FOUND);
@@ -54,7 +51,7 @@ export class AlbumService {
     try {
       const albumId = uuidv4();
       const album = { id: albumId, ...createAlbumDto };
-      await this.albumRepository.save(album);
+      await this.db.albums.save(album);
 
       return album;
     } catch (error) {
@@ -70,7 +67,7 @@ export class AlbumService {
       album.year = year;
       album.artistId = artistId;
 
-      await this.albumRepository.save(album);
+      await this.db.albums.save(album);
 
       return album;
     } catch (error) {
@@ -81,7 +78,7 @@ export class AlbumService {
   async delete(id: string) {
     try {
       await this.getById(id);
-      const deletionResult = await this.albumRepository.delete(id);
+      const deletionResult = await this.db.albums.delete(id);
 
       if (deletionResult) {
         return null;

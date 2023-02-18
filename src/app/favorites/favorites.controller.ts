@@ -14,11 +14,11 @@ import { FavoritesService } from './favorites.service';
 export class FavoritesController {
   constructor(private favoritesService: FavoritesService) {}
 
-  @Get()
-  @HttpCode(HttpStatus.OK)
-  getAll() {
-    return this.favoritesService.getAll();
-  }
+  // @Get()
+  // @HttpCode(HttpStatus.OK)
+  // getAll() {
+  //   return this.favoritesService.getAll();
+  // }
 
   // @Post('/artist/:id')
   // @HttpCode(HttpStatus.CREATED)

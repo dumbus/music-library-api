@@ -5,11 +5,9 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { v4 as uuidv4, validate as uuidValidate } from 'uuid';
 
-import { TrackEntity } from './entities/track.entity';
+import { DbService } from 'src/db/db.service';
 import { FavoritesService } from '../favorites/favorites.service';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
@@ -17,8 +15,7 @@ import { UpdateTrackDto } from './dto/update-track.dto';
 @Injectable()
 export class TrackService {
   constructor(
-    @InjectRepository(TrackEntity)
-    private trackRepository: Repository<TrackEntity>,
+    private db: DbService,
 
     @Inject(forwardRef(() => FavoritesService))
     private favoritesService: FavoritesService,
@@ -26,7 +23,7 @@ export class TrackService {
 
   async getAll() {
     try {
-      return await this.trackRepository.find();
+      return await this.db.tracks.find();
     } catch (error) {
       throw error;
     }
@@ -38,7 +35,7 @@ export class TrackService {
         throw new HttpException('Invalid track ID', HttpStatus.BAD_REQUEST);
       }
 
-      const track = await this.trackRepository.findOne({ where: { id } });
+      const track = await this.db.tracks.findOne({ where: { id } });
 
       if (!track) {
         throw new HttpException('Track was not found', HttpStatus.NOT_FOUND);
@@ -54,7 +51,7 @@ export class TrackService {
     try {
       const trackId = uuidv4();
       const track = { id: trackId, ...createTrackDto };
-      await this.trackRepository.save(track);
+      await this.db.tracks.save(track);
 
       return track;
     } catch (error) {
@@ -71,7 +68,7 @@ export class TrackService {
       track.artistId = artistId;
       track.albumId = albumId;
 
-      await this.trackRepository.save(track);
+      await this.db.tracks.save(track);
 
       return track;
     } catch (error) {
@@ -82,7 +79,7 @@ export class TrackService {
   async delete(id: string) {
     try {
       await this.getById(id);
-      const deletionResult = await this.trackRepository.delete(id);
+      const deletionResult = await this.db.tracks.delete(id);
 
       if (deletionResult) {
         return null;

@@ -1,23 +1,18 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { v4 as uuidv4, validate as uuidValidate } from 'uuid';
 
 import { User } from './interfaces/user.interface';
-import { UserEntity } from './entities/user.entity';
+import { DbService } from 'src/db/db.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
-  constructor(
-    @InjectRepository(UserEntity)
-    private userRepository: Repository<UserEntity>,
-  ) {}
+  constructor(private db: DbService) {}
 
   async getAll() {
     try {
-      const users = await this.userRepository.find();
+      const users = await this.db.users.find();
 
       const usersToResponse = users.map((user) => {
         const userToResponse = this.toRequest(user);
@@ -37,7 +32,7 @@ export class UserService {
         throw new HttpException('Invalid user ID', HttpStatus.BAD_REQUEST);
       }
 
-      const user = await this.userRepository.findOne({ where: { id } });
+      const user = await this.db.users.findOne({ where: { id } });
 
       if (!user) {
         throw new HttpException('User was not found', HttpStatus.NOT_FOUND);
@@ -67,7 +62,7 @@ export class UserService {
         updatedAt: dateNow,
         ...createUserDto,
       };
-      await this.userRepository.save(user);
+      await this.db.users.save(user);
 
       const userToResponse = this.toRequest(user);
 
@@ -91,7 +86,7 @@ export class UserService {
       user.updatedAt = dateNow;
       user.password = newPassword;
 
-      await this.userRepository.save(user);
+      await this.db.users.save(user);
 
       const userToResponse = this.toRequest(user);
 
@@ -104,7 +99,7 @@ export class UserService {
   async delete(id: string) {
     try {
       await this.getById(id);
-      const deletionResult = await this.userRepository.delete(id);
+      const deletionResult = await this.db.users.delete(id);
 
       if (deletionResult) {
         return null;

@@ -25,31 +25,31 @@ export class FavoritesService {
     private trackService: TrackService,
   ) {}
 
-  getAll() {
-    const favoriteArtists = this.db.artists.filter((artist) => {
-      const id = artist.id;
+  // getAll() {
+  //   const favoriteArtists = this.db.artists.filter((artist) => {
+  //     const id = artist.id;
 
-      return this.db.favorites.artists.includes(id);
-    });
+  //     return this.db.favorites.artists.includes(id);
+  //   });
 
-    const favoriteAlbums = this.db.albums.filter((album) => {
-      const id = album.id;
+  //   const favoriteAlbums = this.db.albums.filter((album) => {
+  //     const id = album.id;
 
-      return this.db.favorites.albums.includes(id);
-    });
+  //     return this.db.favorites.albums.includes(id);
+  //   });
 
-    const favoriteTracks = this.db.tracks.filter((track) => {
-      const id = track.id;
+  //   const favoriteTracks = this.db.tracks.filter((track) => {
+  //     const id = track.id;
 
-      return this.db.favorites.tracks.includes(id);
-    });
+  //     return this.db.favorites.tracks.includes(id);
+  //   });
 
-    return {
-      artists: favoriteArtists,
-      albums: favoriteAlbums,
-      tracks: favoriteTracks,
-    };
-  }
+  //   return {
+  //     artists: favoriteArtists,
+  //     albums: favoriteAlbums,
+  //     tracks: favoriteTracks,
+  //   };
+  // }
 
   // addArtist(id: string) {
   //   try {

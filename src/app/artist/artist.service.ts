@@ -5,11 +5,9 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { v4 as uuidv4, validate as uuidValidate } from 'uuid';
 
-import { ArtistEntity } from './entities/artist.entity';
+import { DbService } from 'src/db/db.service';
 import { FavoritesService } from '../favorites/favorites.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
@@ -17,8 +15,7 @@ import { UpdateArtistDto } from './dto/update-artist.dto';
 @Injectable()
 export class ArtistService {
   constructor(
-    @InjectRepository(ArtistEntity)
-    private artistRepository: Repository<ArtistEntity>,
+    private db: DbService,
 
     @Inject(forwardRef(() => FavoritesService))
     private favoritesService: FavoritesService,
@@ -26,7 +23,7 @@ export class ArtistService {
 
   async getAll() {
     try {
-      return await this.artistRepository.find();
+      return await this.db.artists.find();
     } catch (error) {
       throw error;
     }
@@ -38,7 +35,7 @@ export class ArtistService {
         throw new HttpException('Invalid artist ID', HttpStatus.BAD_REQUEST);
       }
 
-      const artist = await this.artistRepository.findOne({ where: { id } });
+      const artist = await this.db.artists.findOne({ where: { id } });
 
       if (!artist) {
         throw new HttpException('Artist was not found', HttpStatus.NOT_FOUND);
@@ -54,7 +51,7 @@ export class ArtistService {
     try {
       const artistId = uuidv4();
       const artist = { id: artistId, ...createArtistDto };
-      await this.artistRepository.save(artist);
+      await this.db.artists.save(artist);
 
       return artist;
     } catch (error) {
@@ -69,7 +66,7 @@ export class ArtistService {
       artist.name = name;
       artist.grammy = grammy;
 
-      await this.artistRepository.save(artist);
+      await this.db.artists.save(artist);
 
       return artist;
     } catch (error) {
@@ -80,7 +77,7 @@ export class ArtistService {
   async delete(id: string) {
     try {
       await this.getById(id);
-      const deletionResult = await this.artistRepository.delete(id);
+      const deletionResult = await this.db.artists.delete(id);
 
       if (deletionResult) {
         return null;
