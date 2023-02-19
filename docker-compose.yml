@@ -7,12 +7,15 @@ services:
     image: dumbus/rest-service-api
     restart: on-failure
     depends_on:
-      - postgres
+      postgres:
+        condition: service_started
     env_file: .env
     ports:
       - ${PORT}:${PORT}
     networks:
       - custom-network
+    volumes:
+      - ./src:/usr/app/src
 
   postgres:
     build: ./database
