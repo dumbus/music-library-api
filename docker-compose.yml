@@ -4,7 +4,7 @@ services:
   api:
     build: .
     container_name: api
-    image: rest-service-api
+    image: dumbus/rest-service-api
     restart: on-failure
     depends_on:
       - postgres
@@ -17,7 +17,7 @@ services:
   postgres:
     build: ./database
     container_name: postgres
-    image: rest-service-postgres
+    image: dumbus/rest-service-postgres
     restart: on-failure
     env_file: .env
     environment:

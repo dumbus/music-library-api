@@ -23,7 +23,8 @@
     "migration:generate": "npm run typeorm -- migration:generate src/migrations/init",
     "migration:run": "npm run typeorm -- migration:run",
     "docker": "docker compose up",
-    "docker:scan": "docker scan rest-service-api"
+    "docker:test": "docker exec api npm run test",
+    "docker:scan": "docker scan dumbus/rest-service-api"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",
