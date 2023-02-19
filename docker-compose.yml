@@ -24,6 +24,7 @@ services:
     restart: on-failure
     env_file: .env
     environment:
+      - PGDATA=/var/lib/postgresql/data/pgdata
       - POSTGRES_USERNAME=${POSTGRES_USERNAME}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DATABASE=${POSTGRES_DATABASE}
@@ -32,7 +33,18 @@ services:
       - ${POSTGRES_PORT}:${POSTGRES_PORT}
     networks:
       - custom-network
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    command: [
+      "postgres",
+      "-c", "logging_collector=true",
+      "-c", "log_statement=all"
+    ]
+
 
 networks:
   custom-network:
     driver: bridge
+
+volumes:
+  postgres_data:
