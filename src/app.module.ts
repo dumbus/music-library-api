@@ -22,6 +22,7 @@ import { CustomLoggerMiddleware } from './logger/logger.middleware';
     UserModule,
     TrackModule,
     FavoritesModule,
+    LoggerModule,
     TypeOrmModule.forRoot(typeormConfig.options),
   ],
   controllers: [AppController],

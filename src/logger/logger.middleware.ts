@@ -5,26 +5,28 @@ import { CustomLoggerService } from './logger.service';
 
 @Injectable()
 export class CustomLoggerMiddleware implements NestMiddleware {
-    constructor(private logger: CustomLoggerService) {}
+  constructor(private logger: CustomLoggerService) {}
 
-    use(req: Request, res: Response, next: NextFunction) {
-        next();
+  use(req: Request, res: Response, next: NextFunction) {
+    next();
 
-        const { url, query, body } = req;
-        const { statusCode } = res;
-        const stringifiedQuery = JSON.stringify(query);
-        const stringifiedBody = JSON.stringify(body);
+    res.on('finish', () => {
+      const { url, query, body } = req;
+      const { statusCode } = res;
+      const stringifiedQuery = JSON.stringify(query);
+      const stringifiedBody = JSON.stringify(body);
 
-        const logMessage = `url: ${url}, query: ${stringifiedQuery}, body: ${stringifiedBody}, statusCode: ${statusCode}`;
+      const logMessage = `url: ${url}, query: ${stringifiedQuery}, body: ${stringifiedBody}, statusCode: ${statusCode}`;
 
-        if (statusCode >= 500 && statusCode <= 599) {
-            this.logger.error(logMessage);
-        }
+      if (statusCode >= 500 && statusCode <= 599) {
+        this.logger.error(logMessage);
+      }
 
-        if (statusCode >= 400 && statusCode <= 499) {
-            this.logger.warn(logMessage);
-        }
+      if (statusCode >= 400 && statusCode <= 499) {
+        this.logger.warn(logMessage);
+      }
 
-        this.logger.log(logMessage);
-    }
+      this.logger.log(logMessage);
+    });
+  }
 }
