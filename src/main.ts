@@ -6,6 +6,7 @@ import * as yaml from 'js-yaml';
 import { readFile } from 'fs/promises';
 
 import { AppModule } from './app.module';
+import { CustomLoggerService } from './logger/logger.service';
 
 dotenv.config();
 
@@ -21,5 +22,13 @@ async function bootstrap() {
   SwaggerModule.setup('doc', app, document);
 
   await app.listen(PORT);
+
+  process.on('uncaughtException', (error) => {
+    app.get(CustomLoggerService).error(`Unhandled Exception: ${error}`);
+  });
+
+  process.on('unhandledRejection', (error) => {
+    app.get(CustomLoggerService).error(`Unhandled Rejection: ${error}`);
+  });
 }
 bootstrap();

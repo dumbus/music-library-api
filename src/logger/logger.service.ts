@@ -37,8 +37,6 @@ export class CustomLoggerService implements LoggerService {
       const timestamp = new Date().toISOString();
       const logMessage = `${timestamp} - ${message.toString()} \n`;
 
-      console.log(logMessage);
-
       if (level === 0) {
         this.errorLogFileStream.write(logMessage);
       }
