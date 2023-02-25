@@ -35,7 +35,8 @@ services:
     networks:
       - custom-network
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+    # - postgres_data:/var/lib/postgresql/data
+      - ./database/postgres_data:/var/lib/postgresql/data
     command: [
       "postgres",
       "-c", "logging_collector=true",
