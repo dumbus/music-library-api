@@ -10,12 +10,12 @@ export class AppController {
     return this.appService.getHello();
   }
 
-  @Get('exception')
+  @Get('error/exception')
   testException() {
     throw new Error('Test Uncaught Exception');
   }
 
-  @Get('reject')
+  @Get('error/reject')
   testReject() {
     Promise.reject('Test Unhandled Reject');
   }

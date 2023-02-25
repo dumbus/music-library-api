@@ -1,6 +1,8 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { v4 as uuidv4, validate as uuidValidate } from 'uuid';
 
+import { compare, hash } from 'bcrypt';
+
 import { User } from './interfaces/user.interface';
 import { DbService } from 'src/db/db.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -54,13 +56,20 @@ export class UserService {
     try {
       const userId = uuidv4();
       const dateNow = Date.now();
+      const { password, login } = createUserDto;
+
+      const hashedPassword = await hash(
+        password,
+        parseInt(process.env.CRYPT_SALT),
+      );
 
       const user = {
         id: userId,
         version: 1,
         createdAt: dateNow,
         updatedAt: dateNow,
-        ...createUserDto,
+        password: hashedPassword,
+        login,
       };
       await this.db.users.save(user);
 
@@ -77,14 +86,16 @@ export class UserService {
       const { oldPassword, newPassword } = updateUserDto;
       const user = await this.getById(id, true);
 
-      if (user.password !== oldPassword) {
+      const isPasswordCorrect = await compare(oldPassword, user.password);
+
+      if (!isPasswordCorrect) {
         throw new HttpException('Password is incorrect', HttpStatus.FORBIDDEN);
       }
       const dateNow = Date.now();
 
       user.version += 1;
       user.updatedAt = dateNow;
-      user.password = newPassword;
+      user.password = await hash(newPassword, parseInt(process.env.CRYPT_SALT));
 
       await this.db.users.save(user);
 
