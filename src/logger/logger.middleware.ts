@@ -8,15 +8,24 @@ export class CustomLoggerMiddleware implements NestMiddleware {
   constructor(private logger: CustomLoggerService) {}
 
   use(req: Request, res: Response, next: NextFunction) {
+    const { originalUrl, query, body, method } = req;
+    const stringifiedQuery = JSON.stringify(query);
+    const stringifiedBody = JSON.stringify(body);
+
+    const requestDebugMessage = `${method} request was sent to server, url: ${originalUrl}, query: ${stringifiedQuery}, body: ${stringifiedBody}`;
+    this.logger.debug(requestDebugMessage);
+
+    const requestLogMessage = `Request - method: ${method}, url: ${originalUrl}, query: ${stringifiedQuery}, body: ${stringifiedBody}`;
+    this.logger.log(requestLogMessage);
+
     res.on('finish', () => {
-      const { url, query, body, method } = req;
       const { statusCode } = res;
-      const stringifiedQuery = JSON.stringify(query);
-      const stringifiedBody = JSON.stringify(body);
 
-      const logMessage = `${method} url: ${url}, query: ${stringifiedQuery}, body: ${stringifiedBody}, statusCode: ${statusCode}`;
+      const responseLogMessage = `Response - statusCode: ${statusCode}`;
+      this.logger.log(responseLogMessage);
 
-      this.logger.log(logMessage);
+      const responseDebugMessage = `Server responded with statusCode ${statusCode}`;
+      this.logger.debug(responseDebugMessage);
     });
 
     next();

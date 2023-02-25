@@ -42,15 +42,16 @@ export class CustomExceptionsFilter implements ExceptionFilter {
     httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);
 
     if (responseBody.statusCode >= 500 && responseBody.statusCode <= 599) {
-      this.logger.error(
-        `statusCode: ${responseBody.statusCode}, message: ${responseBody.message}`,
-      );
+      const errorMessage = `statusCode: ${responseBody.statusCode}, message: ${responseBody.message}`;
+      this.logger.error(errorMessage);
     }
 
     if (responseBody.statusCode >= 400 && responseBody.statusCode <= 499) {
-      this.logger.warn(
-        `statusCode: ${responseBody.statusCode}, message: ${responseBody.message}`,
-      );
+      const warnMessage = `statusCode: ${responseBody.statusCode}, message: ${responseBody.message}`;
+      this.logger.warn(warnMessage);
     }
+
+    const debugMessage = `An error occurred: statusCode: ${responseBody.statusCode}, message: ${responseBody.message}`;
+    this.logger.debug(debugMessage);
   }
 }

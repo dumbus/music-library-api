@@ -23,6 +23,8 @@ async function bootstrap() {
 
   await app.listen(PORT);
 
+  app.get(CustomLoggerService).debug(`Server started at: ${PORT}`);
+
   process.on('uncaughtException', (error) => {
     app.get(CustomLoggerService).error(`Unhandled Exception: ${error}`);
   });
