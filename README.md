@@ -128,8 +128,8 @@ Valid logging levels are:
 - `debug` - errors, warnings, logs, debug (information about what is happening in the app)
 
 Log files are named in formats:
-- <current time as ISO string>-app.log (logs that can be written according to current `logging level`)
-- <current time as ISO string>-error.log (for errors and warnings, will be written **always**)
+- ${current time as ISO string}-app.log (logs that can be written according to current `logging level`)
+- ${current time as ISO string}-error.log (for errors and warnings, will be written **always**)
 
 Environment variable ```MAX_LOG_FILE_SIZE``` sets max log file size in bytes. After log file reach this size, there will be created new log file.  
 

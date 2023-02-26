@@ -2,7 +2,7 @@ import { createWriteStream, WriteStream } from 'node:fs';
 import { LoggerService } from '@nestjs/common';
 import { stat } from 'node:fs/promises';
 
-const logLevels = ['error', 'warn', 'log', 'verbose', 'debug'];
+const logLevels = ['error', 'warn', 'log', 'debug'];
 
 const currentLogLevel = process.env.LOGGER_LEVEL;
 
