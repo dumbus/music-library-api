@@ -19,17 +19,18 @@ export class CustomAuthGuard implements CanActivate {
       return true;
     }
 
-    const authHeaders = request.headers['authorization'].split(' ');
-    if (!authHeaders.length) {
+    const authHeader = request.headers['authorization'];
+    if (!authHeader) {
       throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
     }
 
-    const authScheme = authHeaders[0];
+    const authHeaderParts = authHeader.split(' ');
+    const authScheme = authHeaderParts[0];
     if (authScheme !== 'Bearer') {
       throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
     }
 
-    const authToken = authHeaders[1];
+    const authToken = authHeaderParts[1];
     try {
       verify(authToken, process.env.JWT_SECRET_AUTH_KEY);
 

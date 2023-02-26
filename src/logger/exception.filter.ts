@@ -52,7 +52,8 @@ export class CustomExceptionsFilter implements ExceptionFilter {
       this.logger.warn(warnMessage);
     }
 
-    const debugMessage = `An error occurred: statusCode: ${responseBody.statusCode}, message: ${responseBody.message}`;
+    const exceptionStringified = JSON.stringify(exception);
+    const debugMessage = `An error occurred: statusCode: Error: ${exceptionStringified}`;
     this.logger.debug(debugMessage);
   }
 }
