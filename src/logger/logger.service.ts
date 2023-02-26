@@ -69,17 +69,17 @@ export class CustomLoggerService implements LoggerService {
     }
   }
 
-  writeLog(level: number, message: any) {
+  async writeLog(level: number, message: any) {
     if (level <= this.level) {
       const timestamp = new Date().toISOString();
       const logMessage = `${timestamp} - ${message.toString()} \n`;
 
       if (level <= 1) {
-        this.rotateLogFile('error');
+        await this.rotateLogFile('error');
         this.errorLogFileStream.write(logMessage);
       }
 
-      this.rotateLogFile('log');
+      await this.rotateLogFile('log');
       this.appLogFileStream.write(logMessage);
     }
   }
