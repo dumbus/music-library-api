@@ -1,4 +1,10 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { verify } from 'jsonwebtoken';
 
 const noAuthRoutes = ['', 'auth', 'doc', 'error'];
@@ -15,12 +21,12 @@ export class CustomAuthGuard implements CanActivate {
 
     const authHeaders = request.headers['authorization'].split(' ');
     if (!authHeaders.length) {
-      return false;
+      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
     }
 
     const authScheme = authHeaders[0];
     if (authScheme !== 'Bearer') {
-      return false;
+      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
     }
 
     const authToken = authHeaders[1];
@@ -29,7 +35,7 @@ export class CustomAuthGuard implements CanActivate {
 
       return true;
     } catch (error) {
-      return false;
+      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
     }
   }
 }
