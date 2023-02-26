@@ -118,6 +118,8 @@ components:
   responses:
     UnauthorizedError:
       description: Access token is missing or invalid
+    InternalServerError:
+      description: Internal Server Error
   securitySchemes:
     bearerAuth:
       type: http
@@ -899,3 +901,12 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
         404:
           description: Artist was not found.
+  /error:
+    get:
+      tags:
+        - Error
+      summary: Server Error
+      description: Test Internal Server Error
+      responses:
+        500:
+          $ref: '#/components/responses/InternalServerError'

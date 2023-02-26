@@ -131,7 +131,10 @@ Log files are named in formats:
 - <current time as ISO string>-app.log (logs that can be written according to current `logging level`)
 - <current time as ISO string>-error.log (for errors and warnings, will be written **always**)
 
-Environment variable ```MAX_LOG_FILE_SIZE``` sets max log file size in bytes. After log file reach this size, there will be created new log file.
+Environment variable ```MAX_LOG_FILE_SIZE``` sets max log file size in bytes. After log file reach this size, there will be created new log file.  
+
+There is an additional `error` endpoint, that throws an error on server.  
+>Server should answer with `status code` **500** and corresponding message
 
 ## Authentification:
 All routes except `auth/signup`, `auth/login`, `auth/refresh`, `/doc`, `/` require to set HTTP authorization header.
@@ -338,3 +341,7 @@ You can use environment variables `TOKEN_AUTH_EXPIRE_TIME` and `TOKEN_REFRESH_EX
       - Server should answer with `status code` **204** if the artist was in favorites and now it's deleted id is found and deleted
       - Server should answer with `status code` **400** and corresponding message if `artistId` is invalid (not `uuid`)
       - Server should answer with `status code` **404** and corresponding message if corresponding artist is not favorite
+
+  * `Error` (`error` route)
+    * `GET error` - throws an Error on the server
+      - Server should answer with `status code` **500** and corresponding message
