@@ -2,7 +2,7 @@
 
 [Logging & Error handling Assignment](https://github.com/AlreadyBored/nodejs-assignments/blob/main/assignments/logging-error-handling/assignment.md)  
 [Authentication & Authorization Assignment](https://github.com/AlreadyBored/nodejs-assignments/blob/main/assignments/authentication/assignment.md)  
-[Logging & Error handling Scoring](https://github.com/AlreadyBored/nodejs-assignments/blob/main/assignments/logging-error-handling/score.md)
+[Logging & Error handling Scoring](https://github.com/AlreadyBored/nodejs-assignments/blob/main/assignments/logging-error-handling/score.md)  
 [Authentication & Authorization Scoring](https://github.com/AlreadyBored/nodejs-assignments/blob/main/assignments/authentication/score.md)
 
 ## Prerequisites
@@ -119,7 +119,7 @@ npm run test:auth -- <path to suite>
 
 ## Logging:
 
-Application logs will be saved in `./logs` folder, this folder is also binded to docker container.
+Application logs will be saved in `./logs` folder, this folder is also binded to docker container.  
 Environment variable `LOGGER_LEVEL` sets logging level for application logs, **error** and **warning** logs will be written **ALWAYS**.  
 Valid logging levels are:  
 - `error` - errors (responses with statusCodes from 500 to 599)
