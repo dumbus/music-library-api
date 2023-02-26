@@ -24,6 +24,7 @@
     "migration:run": "npm run typeorm -- migration:run",
     "docker": "docker-compose up",
     "docker:test": "docker exec api npm run test",
+    "docker:test-auth": "docker exec api npm run test:auth",
     "docker:scan": "docker scan dumbus/rest-service-api"
   },
   "dependencies": {
