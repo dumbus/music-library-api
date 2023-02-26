@@ -8,11 +8,36 @@ export class CustomLoggerMiddleware implements NestMiddleware {
   constructor(private logger: CustomLoggerService) {}
 
   use(req: Request, res: Response, next: NextFunction) {
-    const { originalUrl, query, body, method } = req;
+    const { originalUrl, query, body, method, headers } = req;
     const stringifiedQuery = JSON.stringify(query);
     const stringifiedBody = JSON.stringify(body);
+    const authHeaders = headers['authorization'] || 'no auth headers set';
+    const userAgentHeaders =
+      headers['user-agent'] || 'no user-agent headers set';
 
-    const requestDebugMessage = `${method} request was sent to server, url: ${originalUrl}, query: ${stringifiedQuery}, body: ${stringifiedBody}`;
+    const oldWrite = res.write;
+    const oldEnd = res.end;
+    const chunks = [];
+
+    res.write = (...restArgs: any[]) => {
+      chunks.push(Buffer.from(restArgs[0]));
+      return oldWrite.apply(res, restArgs);
+    };
+
+    res.end = (...restArgs: any[]) => {
+      if (restArgs[0]) {
+        chunks.push(Buffer.from(restArgs[0]));
+      }
+
+      return oldEnd.apply(res, restArgs);
+    };
+
+    const requestDebugMessage = `${method} request was sent to server,
+      url: ${originalUrl},
+      query: ${stringifiedQuery},
+      body: ${stringifiedBody},
+      auth headers: ${authHeaders}
+      user-agent headers: ${userAgentHeaders}`;
     this.logger.debug(requestDebugMessage);
 
     const requestLogMessage = `Request - method: ${method}, url: ${originalUrl}, query: ${stringifiedQuery}, body: ${stringifiedBody}`;
@@ -21,10 +46,11 @@ export class CustomLoggerMiddleware implements NestMiddleware {
     res.on('finish', () => {
       const { statusCode } = res;
 
-      const responseLogMessage = `Response - statusCode: ${statusCode}`;
+      const responseBody = Buffer.concat(chunks).toString('utf8');
+      const responseLogMessage = `Response - statusCode: ${statusCode}, body: ${responseBody}`;
       this.logger.log(responseLogMessage);
 
-      const responseDebugMessage = `Server responded with statusCode ${statusCode}`;
+      const responseDebugMessage = `Server responded with statusCode ${statusCode}, body: ${responseBody}`;
       this.logger.debug(responseDebugMessage);
     });
 
