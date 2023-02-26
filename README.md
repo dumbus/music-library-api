@@ -137,7 +137,7 @@ There is an additional `error` endpoint, that throws an error on server.
 >Server should answer with `status code` **500** and corresponding message
 
 ## Authentification:
-All routes except `auth/signup`, `auth/login`, `auth/refresh`, `/doc`, `/` require to set HTTP authorization header.
+All routes except `auth/signup`, `auth/login`, `auth/refresh`, `/doc`, `/`, `error` require to set HTTP authorization header.
 - POST `auth/signup` - send login and password to create a new user
 - POST `auth/login` - send login and password to get Access token and Refresh token
 - POST `auth/refresh` - send refresh token in body as { refreshToken } to get new pair of Access token and Refresh token
