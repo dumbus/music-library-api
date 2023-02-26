@@ -32,12 +32,7 @@ export class CustomLoggerMiddleware implements NestMiddleware {
       return oldEnd.apply(res, restArgs);
     };
 
-    const requestDebugMessage = `${method} request was sent to server,
-      url: ${originalUrl},
-      query: ${stringifiedQuery},
-      body: ${stringifiedBody},
-      auth headers: ${authHeaders}
-      user-agent headers: ${userAgentHeaders}`;
+    const requestDebugMessage = `${method} request was sent to server, url: ${originalUrl}, query: ${stringifiedQuery}, body: ${stringifiedBody}, auth headers: ${authHeaders},  user-agent headers: ${userAgentHeaders}`;
     this.logger.debug(requestDebugMessage);
 
     const requestLogMessage = `Request - method: ${method}, url: ${originalUrl}, query: ${stringifiedQuery}, body: ${stringifiedBody}`;
