@@ -283,7 +283,7 @@ paths:
         in: path
         required: true
         schema:
-          type: string
+          type: stringAccess token is missing or invalid
     get:
       tags:
         - Users

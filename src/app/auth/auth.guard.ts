@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { verify } from 'jsonwebtoken';
 
-const noAuthRoutes = ['', 'auth', 'doc', 'error'];
+const noAuthRoutes = ['', 'auth', 'doc'];
 
 @Injectable()
 export class CustomAuthGuard implements CanActivate {

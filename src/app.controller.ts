@@ -9,14 +9,4 @@ export class AppController {
   getHello(): string {
     return this.appService.getHello();
   }
-
-  @Get('error/exception')
-  testException() {
-    throw new Error('Test Uncaught Exception');
-  }
-
-  @Get('error/reject')
-  testReject() {
-    Promise.reject('Test Unhandled Reject');
-  }
 }
