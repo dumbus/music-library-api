@@ -23,7 +23,14 @@ async function bootstrap() {
 
   await app.listen(PORT);
 
-  app.get(CustomLoggerService).debug(`Server started at: ${PORT}`);
+  const serverStartMessage = `Server started at: localhost:${PORT}`;
+  const openApiStartMessage = `OpenAPI documentation is available at: localhost:${PORT}/doc`;
+
+  console.log(serverStartMessage);
+  console.log(openApiStartMessage);
+
+  app.get(CustomLoggerService).debug(serverStartMessage);
+  app.get(CustomLoggerService).debug(openApiStartMessage);
 
   process.on('uncaughtException', (error) => {
     app.get(CustomLoggerService).error(`Unhandled Exception: ${error}`);
