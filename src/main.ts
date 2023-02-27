@@ -29,15 +29,15 @@ async function bootstrap() {
   console.log(serverStartMessage);
   console.log(openApiStartMessage);
 
-  await app.get(CustomLoggerService).debug(serverStartMessage);
-  await app.get(CustomLoggerService).debug(openApiStartMessage);
+  app.get(CustomLoggerService).debug(serverStartMessage);
+  app.get(CustomLoggerService).debug(openApiStartMessage);
 
-  process.on('uncaughtException', async (error) => {
-    await app.get(CustomLoggerService).error(`Unhandled Exception: ${error}`);
+  process.on('uncaughtException', (error) => {
+    this.error(`Unhandled Exception: ${error}`);
   });
 
-  process.on('unhandledRejection', async (error) => {
-    await app.get(CustomLoggerService).error(`Unhandled Rejection: ${error}`);
+  process.on('unhandledRejection', (error) => {
+    this.error(`Unhandled Rejection: ${error}`);
   });
 }
 bootstrap();

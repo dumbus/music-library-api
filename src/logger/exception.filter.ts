@@ -16,7 +16,7 @@ export class CustomExceptionsFilter implements ExceptionFilter {
     private readonly httpAdapterHost: HttpAdapterHost,
   ) {}
 
-  async catch(exception: unknown, host: ArgumentsHost): Promise<void> {
+  catch(exception: unknown, host: ArgumentsHost): void {
     const { httpAdapter } = this.httpAdapterHost;
 
     const ctx = host.switchToHttp();
@@ -44,16 +44,16 @@ export class CustomExceptionsFilter implements ExceptionFilter {
 
     if (responseBody.statusCode >= 500 && responseBody.statusCode <= 599) {
       const errorMessage = `statusCode: ${responseBody.statusCode}, message: ${responseBody.message}`;
-      await this.logger.error(errorMessage);
+      this.logger.error(errorMessage);
     }
 
     if (responseBody.statusCode >= 400 && responseBody.statusCode <= 499) {
       const warnMessage = `statusCode: ${responseBody.statusCode}, message: ${responseBody.message}`;
-      await this.logger.warn(warnMessage);
+      this.logger.warn(warnMessage);
     }
 
     const exceptionStringified = JSON.stringify(exception);
     const debugMessage = `An error occurred: Error: ${exceptionStringified}`;
-    await this.logger.debug(debugMessage);
+    this.logger.debug(debugMessage);
   }
 }

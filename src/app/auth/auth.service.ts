@@ -41,10 +41,6 @@ export class AuthService {
     try {
       const { refreshToken } = refreshTokenDto;
 
-      if (!refreshToken) {
-        console.log('no refresh token');
-      }
-
       const decodedPayload = verify(
         refreshToken,
         process.env.JWT_SECRET_REFRESH_KEY,

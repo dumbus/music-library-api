@@ -7,7 +7,7 @@ import { CustomLoggerService } from './logger.service';
 export class CustomLoggerMiddleware implements NestMiddleware {
   constructor(private logger: CustomLoggerService) {}
 
-  async use(req: Request, res: Response, next: NextFunction) {
+  use(req: Request, res: Response, next: NextFunction) {
     const { originalUrl, query, body, method, headers } = req;
     const stringifiedQuery = JSON.stringify(query);
     const stringifiedBody = JSON.stringify(body);
@@ -33,20 +33,20 @@ export class CustomLoggerMiddleware implements NestMiddleware {
     };
 
     const requestDebugMessage = `${method} request was sent to server, url: ${originalUrl}, query: ${stringifiedQuery}, body: ${stringifiedBody}, auth headers: ${authHeaders},  user-agent headers: ${userAgentHeaders}`;
-    await this.logger.debug(requestDebugMessage);
+    this.logger.debug(requestDebugMessage);
 
     const requestLogMessage = `Request - method: ${method}, url: ${originalUrl}, query: ${stringifiedQuery}, body: ${stringifiedBody}`;
-    await this.logger.log(requestLogMessage);
+    this.logger.log(requestLogMessage);
 
-    res.on('finish', async () => {
+    res.on('finish', () => {
       const { statusCode } = res;
 
       const responseBody = Buffer.concat(chunks).toString('utf8');
       const responseLogMessage = `Response - statusCode: ${statusCode}, body: ${responseBody}`;
-      await this.logger.log(responseLogMessage);
+      this.logger.log(responseLogMessage);
 
       const responseDebugMessage = `Server responded with statusCode ${statusCode}, body: ${responseBody}`;
-      await this.logger.debug(responseDebugMessage);
+      this.logger.debug(responseDebugMessage);
     });
 
     next();
