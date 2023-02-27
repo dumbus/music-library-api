@@ -7,15 +7,23 @@ import {
 } from '@nestjs/common';
 import { verify } from 'jsonwebtoken';
 
-const noAuthRoutes = ['', 'auth', 'doc', 'error'];
+const noAuthRoutes = ['', 'doc', 'error'];
 
 @Injectable()
 export class CustomAuthGuard implements CanActivate {
   canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
 
-    const currentRoute = request.url.split('/')[1];
-    if (noAuthRoutes.includes(currentRoute)) {
+    const splittedUrl = request.url.split('/');
+
+    const currentRoute = splittedUrl[1];
+    if (currentRoute === 'auth') {
+      const currentSubroute = splittedUrl[2];
+
+      if (currentSubroute === 'signup' || currentSubroute === 'login') {
+        return true;
+      }
+    } else if (noAuthRoutes.includes(currentRoute)) {
       return true;
     }
 
