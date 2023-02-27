@@ -50,9 +50,9 @@ http://localhost:4000/doc/
 npm run docker
 ```
 
-2. Open new terminal and enter command to start tests with authentification:
+2. Open new terminal and enter command to start tests with authentication:
 ```
-npm run docker:test-auth
+npm run docker:test
 ```
 
 ### Vulnerabilities scanning:
@@ -105,13 +105,13 @@ http://localhost:4000/doc/
 
 After application running open new terminal and enter:
 
-To run all tests with authentification:
+To run all tests with authentication:
 
 ```
 npm run test:auth
 ```
 
-To run only one of all test suites with authentification:
+To run only one of all test suites with authentication:
 
 ```
 npm run test:auth -- <path to suite>
@@ -136,7 +136,7 @@ Environment variable ```MAX_LOG_FILE_SIZE``` sets max log file size in bytes. Af
 There is an additional `error` endpoint, that throws an error on server.  
 >Server should answer with `status code` **500** and corresponding message
 
-## Authentification:
+## Authentication:
 All routes except `auth/signup`, `auth/login`, `/doc`, `/`, `error` require to set HTTP authorization header.
 - POST `auth/signup` - send login and password to create a new user
 - POST `auth/login` - send login and password to get Access token and Refresh token
