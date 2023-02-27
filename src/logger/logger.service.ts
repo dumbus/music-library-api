@@ -27,20 +27,20 @@ export class CustomLoggerService implements LoggerService {
     });
   }
 
-  error(message: any) {
-    this.writeLog(0, `ERROR: ${message.toString()}`);
+  async error(message: any) {
+    await this.writeLog(0, `ERROR: ${message.toString()}`);
   }
 
-  warn(message: any) {
-    this.writeLog(1, `WARN: ${message.toString()}`);
+  async warn(message: any) {
+    await this.writeLog(1, `WARN: ${message.toString()}`);
   }
 
-  log(message: any) {
-    this.writeLog(2, `LOG: ${message.toString()}`);
+  async log(message: any) {
+    await this.writeLog(2, `LOG: ${message.toString()}`);
   }
 
-  debug(message: any) {
-    this.writeLog(3, `DEBUG: ${message.toString()}`);
+  async debug(message: any) {
+    await this.writeLog(3, `DEBUG: ${message.toString()}`);
   }
 
   async rotateLogFile(type: 'log' | 'error') {
