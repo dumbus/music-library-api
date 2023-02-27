@@ -203,7 +203,7 @@ You can use environment variables `TOKEN_AUTH_EXPIRE_TIME` and `TOKEN_REFRESH_EX
 
 * `Signup` (`auth/signup` route)
     * `POST auth/signup` - send `login` and `password` to create a new `user`
-      - Server should answer with `status code` **201** and corresponding message if dto is valid
+      - Server should answer with `status code` **201** and a new `user`
       - Server should answer with `status code` **400** and corresponding message if dto is invalid (no `login` or `password`, or they are not a `strings`)
 * `Login` (`auth/login` route)
     * `POST auth/login` - send `login` and `password` to get Access token and Refresh token (optionally)

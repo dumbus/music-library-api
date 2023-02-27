@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule } from '@nestjs/swagger';
-import { ValidationPipe } from '@nestjs/common';
+// import { ValidationPipe } from '@nestjs/common';
 import * as dotenv from 'dotenv';
 import * as yaml from 'js-yaml';
 import { readFile } from 'fs/promises';
@@ -14,7 +14,7 @@ const PORT = Number(process.env.PORT || 4000);
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+  // app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 
   const document = yaml.load(
     await readFile('./doc/api.yaml', { encoding: 'utf-8' }),
