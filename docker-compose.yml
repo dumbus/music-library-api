@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  api:
+    build: .
+    container_name: api
+    image: dumbus/rest-service-api
+    restart: on-failure
+    depends_on:
+      postgres:
+        condition: service_started
+    env_file: .env
+    ports:
+      - ${PORT}:${PORT}
+    networks:
+      - custom-network
+    volumes:
+      - ./src:/usr/app/src
+
+  postgres:
+    build: ./database
+    container_name: postgres
+    image: dumbus/rest-service-postgres
+    restart: on-failure
+    env_file: .env
+    environment:
+      - PGDATA=/var/lib/postgresql/data/pgdata
+      - POSTGRES_USERNAME=${POSTGRES_USERNAME}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DATABASE=${POSTGRES_DATABASE}
+    hostname: ${POSTGRES_HOST}
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    networks:
+      - custom-network
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    command: [
+      "postgres",
+      "-c", "logging_collector=true",
+      "-c", "log_statement=all"
+    ]
+
+
+networks:
+  custom-network:
+    driver: bridge
+
+volumes:
+  postgres_data:

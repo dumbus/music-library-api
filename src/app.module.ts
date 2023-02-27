@@ -1,4 +1,7 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
+import { typeormConfig } from './typeorm.config';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -17,6 +20,7 @@ import { FavoritesModule } from './app/favorites/favorites.module';
     UserModule,
     TrackModule,
     FavoritesModule,
+    TypeOrmModule.forRoot(typeormConfig.options),
   ],
   controllers: [AppController],
   providers: [AppService],

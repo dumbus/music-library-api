@@ -12,7 +12,7 @@ dotenv.config();
 const PORT = Number(process.env.PORT || 4000);
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { cors: true });
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 
   const document = yaml.load(

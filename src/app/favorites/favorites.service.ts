@@ -1,174 +1,202 @@
-import {
-  Injectable,
-  Inject,
-  forwardRef,
-  HttpException,
-  HttpStatus,
-} from '@nestjs/common';
-import { validate as uuidValidate } from 'uuid';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { v4 as uuidv4, validate as uuidValidate } from 'uuid';
 
 import { DbService } from '../../db/db.service';
-import { ArtistService } from '../artist/artist.service';
-import { AlbumService } from '../album/album.service';
-import { TrackService } from '../track/track.service';
+import { FavoriteAlbumEntity } from './entities/favoriteAlbum.entity';
+import { FavoriteArtistEntity } from './entities/favoriteArtist.entity';
+import { FavoriteTrackEntity } from './entities/favoriteTrack.entity';
 
 @Injectable()
 export class FavoritesService {
-  constructor(
-    private db: DbService,
+  constructor(private db: DbService) {}
 
-    @Inject(forwardRef(() => ArtistService))
-    private artistService: ArtistService,
-    @Inject(forwardRef(() => AlbumService))
-    private albumService: AlbumService,
-    @Inject(forwardRef(() => TrackService))
-    private trackService: TrackService,
-  ) {}
-
-  getAll() {
-    const favoriteArtists = this.db.artists.filter((artist) => {
-      const id = artist.id;
-
-      return this.db.favorites.artists.includes(id);
+  async getAll() {
+    const favoriteArtists = await this.db.favoriteArtists.find();
+    const artists = favoriteArtists.map((favoriteArtist) => {
+      return favoriteArtist.artist;
     });
 
-    const favoriteAlbums = this.db.albums.filter((album) => {
-      const id = album.id;
-
-      return this.db.favorites.albums.includes(id);
+    const favoriteAlbums = await this.db.favoriteAlbums.find();
+    const albums = favoriteAlbums.map((favoriteAlbum) => {
+      return favoriteAlbum.album;
     });
 
-    const favoriteTracks = this.db.tracks.filter((track) => {
-      const id = track.id;
-
-      return this.db.favorites.tracks.includes(id);
+    const favoriteTracks = await this.db.favoriteTracks.find();
+    const tracks = favoriteTracks.map((favoriteTrack) => {
+      return favoriteTrack.track;
     });
 
     return {
-      artists: favoriteArtists,
-      albums: favoriteAlbums,
-      tracks: favoriteTracks,
+      artists,
+      albums,
+      tracks,
     };
   }
 
-  addArtist(id: string) {
-    try {
-      const artist = this.artistService.getById(id);
-      const artistId = artist.id;
-      this.db.favorites.artists.push(artistId);
-
-      return { message: 'Artist was successfully added to Favorites' };
-    } catch (error) {
-      switch (error.status) {
-        case 400:
-          throw new HttpException('Invalid artist ID', HttpStatus.BAD_REQUEST);
-        case 404:
-          throw new HttpException(
-            'Artist does not exist',
-            HttpStatus.UNPROCESSABLE_ENTITY,
-          );
-      }
-    }
-  }
-
-  addAlbum(id: string) {
-    try {
-      const album = this.albumService.getById(id);
-      const albumId = album.id;
-      this.db.favorites.albums.push(albumId);
-
-      return { message: 'Album was successfully added to Favorites' };
-    } catch (error) {
-      switch (error.status) {
-        case 400:
-          throw new HttpException('Invalid album ID', HttpStatus.BAD_REQUEST);
-        case 404:
-          throw new HttpException(
-            'Album does not exist',
-            HttpStatus.UNPROCESSABLE_ENTITY,
-          );
-      }
-    }
-  }
-
-  addTrack(id: string) {
-    try {
-      const track = this.trackService.getById(id);
-      const trackId = track.id;
-      this.db.favorites.tracks.push(trackId);
-
-      return { message: 'Track was successfully added to Favorites' };
-    } catch (error) {
-      switch (error.status) {
-        case 400:
-          throw new HttpException('Invalid track ID', HttpStatus.BAD_REQUEST);
-        case 404:
-          throw new HttpException(
-            'Track does not exist',
-            HttpStatus.UNPROCESSABLE_ENTITY,
-          );
-      }
-    }
-  }
-
-  removeArtist(id: string, isDeleted = false) {
+  async addArtist(id: string) {
     if (!uuidValidate(id)) {
       throw new HttpException('Invalid artist ID', HttpStatus.BAD_REQUEST);
     }
 
-    const artistIndex = this.db.favorites.artists.findIndex(
-      (artistId) => artistId === id,
-    );
+    const artist = await this.db.artists.findOne({ where: { id } });
 
-    if (!artistIndex && !isDeleted) {
+    if (!artist) {
       throw new HttpException(
-        'Artist is not in Favorites',
-        HttpStatus.NOT_FOUND,
+        'Artist does not exist',
+        HttpStatus.UNPROCESSABLE_ENTITY,
       );
-    } else if (artistIndex >= 0) {
-      this.db.favorites.artists.splice(artistIndex, 1);
     }
+    const artistId = artist.id;
 
-    return null;
+    const favoriteArtistId = uuidv4();
+    const favoriteArtist: FavoriteArtistEntity = {
+      id: favoriteArtistId,
+      artistId,
+      artist,
+    };
+    await this.db.favoriteArtists.save(favoriteArtist);
+
+    return { message: 'Artist was successfully added to Favorites' };
   }
 
-  removeAlbum(id: string, isDeleted = false) {
+  async addAlbum(id: string) {
     if (!uuidValidate(id)) {
       throw new HttpException('Invalid album ID', HttpStatus.BAD_REQUEST);
     }
 
-    const albumIndex = this.db.favorites.albums.findIndex(
-      (albumId) => albumId === id,
-    );
+    const album = await this.db.albums.findOne({ where: { id } });
 
-    if (!albumIndex && !isDeleted) {
+    if (!album) {
       throw new HttpException(
-        'Album is not in Favorites',
+        'Album does not exist',
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+    const albumId = album.id;
+
+    const favoriteAlbumsId = uuidv4();
+    const favoriteAlbum: FavoriteAlbumEntity = {
+      id: favoriteAlbumsId,
+      albumId,
+      album,
+    };
+
+    await this.db.favoriteAlbums.save(favoriteAlbum);
+
+    return { message: 'Album was successfully added to Favorites' };
+  }
+
+  async addTrack(id: string) {
+    if (!uuidValidate(id)) {
+      throw new HttpException('Invalid track ID', HttpStatus.BAD_REQUEST);
+    }
+
+    const track = await this.db.tracks.findOne({ where: { id } });
+
+    if (!track) {
+      throw new HttpException(
+        'Track does not exist',
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+    const trackId = track.id;
+
+    const favoriteTracksId = uuidv4();
+    const favoriteTrack: FavoriteTrackEntity = {
+      id: favoriteTracksId,
+      trackId,
+      track,
+    };
+    await this.db.favoriteTracks.save(favoriteTrack);
+
+    return { message: 'Track was successfully added to Favorites' };
+  }
+
+  async removeArtist(id: string) {
+    if (!uuidValidate(id)) {
+      throw new HttpException('Invalid artist ID', HttpStatus.BAD_REQUEST);
+    }
+
+    const artist = await this.db.artists.findOne({ where: { id } });
+
+    if (!artist) {
+      throw new HttpException(
+        'Artist does not exist',
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    const artistInFavorites = await this.db.favoriteArtists.findOne({
+      where: { artistId: id },
+    });
+
+    if (!artistInFavorites) {
+      throw new HttpException(
+        'Artist is not in Favorites',
         HttpStatus.NOT_FOUND,
       );
-    } else if (albumIndex >= 0) {
-      this.db.favorites.albums.splice(albumIndex, 1);
+    } else {
+      this.db.favoriteArtists.delete({ artistId: id });
     }
 
     return null;
   }
 
-  removeTrack(id: string, isDeleted = false) {
+  async removeAlbum(id: string) {
+    if (!uuidValidate(id)) {
+      throw new HttpException('Invalid album ID', HttpStatus.BAD_REQUEST);
+    }
+
+    const album = await this.db.albums.findOne({ where: { id } });
+
+    if (!album) {
+      throw new HttpException(
+        'Album does not exist',
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    const albumInFavorites = await this.db.favoriteAlbums.findOne({
+      where: { albumId: id },
+    });
+
+    if (!albumInFavorites) {
+      throw new HttpException(
+        'Album is not in Favorites',
+        HttpStatus.NOT_FOUND,
+      );
+    } else {
+      this.db.favoriteAlbums.delete({ albumId: id });
+    }
+
+    return null;
+  }
+
+  async removeTrack(id: string) {
     if (!uuidValidate(id)) {
       throw new HttpException('Invalid track ID', HttpStatus.BAD_REQUEST);
     }
 
-    const trackIndex = this.db.favorites.tracks.findIndex(
-      (trackId) => trackId === id,
-    );
+    const track = await this.db.tracks.findOne({ where: { id } });
 
-    if (!trackIndex && !isDeleted) {
+    if (!track) {
+      throw new HttpException(
+        'Track does not exist',
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    const trackInFavorites = await this.db.favoriteTracks.findOne({
+      where: { trackId: id },
+    });
+
+    if (!trackInFavorites) {
       throw new HttpException(
         'Track is not in Favorites',
         HttpStatus.NOT_FOUND,
       );
-    } else if (trackIndex >= 0) {
-      this.db.favorites.tracks.splice(trackIndex, 1);
+    } else {
+      this.db.favoriteTracks.delete({ trackId: id });
     }
 
     return null;

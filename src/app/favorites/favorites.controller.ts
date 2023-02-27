@@ -41,18 +41,18 @@ export class FavoritesController {
   @Delete('/artist/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   removeArtist(@Param('id') id: string) {
-    return this.favoritesService.removeArtist(id, false);
+    return this.favoritesService.removeArtist(id);
   }
 
   @Delete('/album/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   removeAlbum(@Param('id') id: string) {
-    return this.favoritesService.removeAlbum(id, false);
+    return this.favoritesService.removeAlbum(id);
   }
 
   @Delete('/track/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   removeTrack(@Param('id') id: string) {
-    return this.favoritesService.removeTrack(id, false);
+    return this.favoritesService.removeTrack(id);
   }
 }

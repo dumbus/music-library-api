@@ -1,100 +1,80 @@
-import {
-  Injectable,
-  Inject,
-  forwardRef,
-  HttpException,
-  HttpStatus,
-} from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { v4 as uuidv4, validate as uuidValidate } from 'uuid';
 
-import { DbService } from '../../db/db.service';
-import { TrackService } from '../track/track.service';
-import { FavoritesService } from '../favorites/favorites.service';
+import { DbService } from 'src/db/db.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 
 @Injectable()
 export class AlbumService {
-  constructor(
-    private db: DbService,
+  constructor(private db: DbService) {}
 
-    @Inject(forwardRef(() => TrackService))
-    private trackService: TrackService,
-    @Inject(forwardRef(() => FavoritesService))
-    private favoritesService: FavoritesService,
-  ) {}
-
-  getAll() {
-    return this.db.albums;
-  }
-
-  getById(id: string) {
-    if (!uuidValidate(id)) {
-      throw new HttpException('Invalid album ID', HttpStatus.BAD_REQUEST);
+  async getAll() {
+    try {
+      return await this.db.albums.find();
+    } catch (error) {
+      throw error;
     }
-
-    const album = this.db.albums.find((album) => album.id === id);
-
-    if (!album) {
-      throw new HttpException('Album was not found', HttpStatus.NOT_FOUND);
-    }
-
-    return album;
   }
 
-  getIndexById(id: string) {
-    if (!uuidValidate(id)) {
-      throw new HttpException('Invalid album ID', HttpStatus.BAD_REQUEST);
-    }
+  async getById(id: string) {
+    try {
+      if (!uuidValidate(id)) {
+        throw new HttpException('Invalid album ID', HttpStatus.BAD_REQUEST);
+      }
 
-    const albumIndex = this.db.albums.findIndex((album) => album.id === id);
+      const album = await this.db.albums.findOne({ where: { id } });
 
-    if (albumIndex === -1) {
-      throw new HttpException('Album was not found', HttpStatus.NOT_FOUND);
-    }
-
-    return albumIndex;
-  }
-
-  create(createAlbumDto: CreateAlbumDto) {
-    const albumId = uuidv4();
-    const album = { id: albumId, ...createAlbumDto };
-    this.db.albums.push(album);
-
-    return album;
-  }
-
-  update(id: string, updateAlbumDto: UpdateAlbumDto) {
-    const { name, year, artistId } = updateAlbumDto;
-    const album = this.getById(id);
-    album.name = name;
-    album.year = year;
-    album.artistId = artistId;
-
-    return album;
-  }
-
-  delete(id: string) {
-    const albumIndex = this.getIndexById(id);
-    this.db.albums.splice(albumIndex, 1);
-
-    this.trackService.removeAlbum(id);
-    this.favoritesService.removeAlbum(id, true);
-
-    return null;
-  }
-
-  removeArtist(artistId: string) {
-    const oldAlbums = this.getAll();
-
-    const newAlbums = oldAlbums.map((album) => {
-      if (album.artistId === artistId) {
-        album.artistId = null;
+      if (!album) {
+        throw new HttpException('Album was not found', HttpStatus.NOT_FOUND);
       }
 
       return album;
-    });
+    } catch (error) {
+      throw error;
+    }
+  }
 
-    this.db.albums = newAlbums;
+  async create(createAlbumDto: CreateAlbumDto) {
+    try {
+      const albumId = uuidv4();
+      const album = { id: albumId, ...createAlbumDto };
+      await this.db.albums.save(album);
+
+      return album;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async update(id: string, updateAlbumDto: UpdateAlbumDto) {
+    try {
+      const { name, year, artistId } = updateAlbumDto;
+      const album = await this.getById(id);
+      album.name = name;
+      album.year = year;
+      album.artistId = artistId;
+
+      await this.db.albums.save(album);
+
+      return album;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async delete(id: string) {
+    try {
+      await this.getById(id);
+      const deletionResult = await this.db.albums.delete(id);
+
+      if (deletionResult) {
+        return null;
+      } else {
+        throw new HttpException('Artist was not found', HttpStatus.NOT_FOUND);
+      }
+    } catch (error) {
+      throw error;
+    }
   }
 }
