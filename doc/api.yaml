@@ -118,6 +118,8 @@ components:
   responses:
     UnauthorizedError:
       description: Access token is missing or invalid
+    ForbiddenError:
+      description: Authentication is failed 
     InternalServerError:
       description: Internal Server Error
   securitySchemes:
@@ -197,7 +199,7 @@ paths:
         400:
           description: Bad request
         403:
-          description: Incorrect login or password
+          description: '#/components/responses/ForbiddenError'
   /auth/refresh:
     post:
       tags:
@@ -228,7 +230,7 @@ paths:
         401:
           $ref: '#/components/responses/UnauthorizedError'
         403:
-          description: Incorrect login or password
+          description: '#/components/responses/ForbiddenError'
   /user:
     get:
       tags:

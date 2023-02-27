@@ -21,13 +21,13 @@ export class CustomAuthGuard implements CanActivate {
 
     const authHeader = request.headers['authorization'];
     if (!authHeader) {
-      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
 
     const authHeaderParts = authHeader.split(' ');
     const authScheme = authHeaderParts[0];
     if (authScheme !== 'Bearer') {
-      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
 
     const authToken = authHeaderParts[1];
