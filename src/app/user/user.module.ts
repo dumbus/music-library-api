@@ -8,5 +8,6 @@ import { UserController } from './user.controller';
   imports: [DbModule],
   controllers: [UserController],
   providers: [UserService],
+  exports: [UserService],
 })
 export class UserModule {}

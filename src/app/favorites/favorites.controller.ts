@@ -6,6 +6,8 @@ import {
   Param,
   HttpStatus,
   HttpCode,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 
 import { FavoritesService } from './favorites.service';
@@ -15,44 +17,51 @@ export class FavoritesController {
   constructor(private favoritesService: FavoritesService) {}
 
   @Get()
+  @UsePipes(new ValidationPipe({ whitelist: true }))
   @HttpCode(HttpStatus.OK)
-  getAll() {
-    return this.favoritesService.getAll();
+  async getAll() {
+    return await this.favoritesService.getAll();
   }
 
   @Post('/artist/:id')
+  @UsePipes(new ValidationPipe({ whitelist: true }))
   @HttpCode(HttpStatus.CREATED)
-  addArtist(@Param('id') id: string) {
-    return this.favoritesService.addArtist(id);
+  async addArtist(@Param('id') id: string) {
+    return await this.favoritesService.addArtist(id);
   }
 
   @Post('/album/:id')
+  @UsePipes(new ValidationPipe({ whitelist: true }))
   @HttpCode(HttpStatus.CREATED)
-  addAlbum(@Param('id') id: string) {
-    return this.favoritesService.addAlbum(id);
+  async addAlbum(@Param('id') id: string) {
+    return await this.favoritesService.addAlbum(id);
   }
 
   @Post('/track/:id')
+  @UsePipes(new ValidationPipe({ whitelist: true }))
   @HttpCode(HttpStatus.CREATED)
-  addTrack(@Param('id') id: string) {
-    return this.favoritesService.addTrack(id);
+  async addTrack(@Param('id') id: string) {
+    return await this.favoritesService.addTrack(id);
   }
 
   @Delete('/artist/:id')
+  @UsePipes(new ValidationPipe({ whitelist: true }))
   @HttpCode(HttpStatus.NO_CONTENT)
-  removeArtist(@Param('id') id: string) {
-    return this.favoritesService.removeArtist(id);
+  async removeArtist(@Param('id') id: string) {
+    return await this.favoritesService.removeArtist(id);
   }
 
   @Delete('/album/:id')
+  @UsePipes(new ValidationPipe({ whitelist: true }))
   @HttpCode(HttpStatus.NO_CONTENT)
-  removeAlbum(@Param('id') id: string) {
-    return this.favoritesService.removeAlbum(id);
+  async removeAlbum(@Param('id') id: string) {
+    return await this.favoritesService.removeAlbum(id);
   }
 
   @Delete('/track/:id')
+  @UsePipes(new ValidationPipe({ whitelist: true }))
   @HttpCode(HttpStatus.NO_CONTENT)
-  removeTrack(@Param('id') id: string) {
-    return this.favoritesService.removeTrack(id);
+  async removeTrack(@Param('id') id: string) {
+    return await this.favoritesService.removeTrack(id);
   }
 }

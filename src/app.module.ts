@@ -1,5 +1,6 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 
 import { typeormConfig } from './typeorm.config';
 
@@ -11,6 +12,11 @@ import { DbModule } from './db/db.module';
 import { UserModule } from './app/user/user.module';
 import { TrackModule } from './app/track/track.module';
 import { FavoritesModule } from './app/favorites/favorites.module';
+import { AuthModule } from './app/auth/auth.module';
+import { LoggerModule } from './logger/logger.module';
+import { CustomLoggerMiddleware } from './logger/logger.middleware';
+import { CustomExceptionsFilter } from './logger/exception.filter';
+import { CustomAuthGuard } from './app/auth/auth.guard';
 
 @Module({
   imports: [
@@ -20,9 +26,19 @@ import { FavoritesModule } from './app/favorites/favorites.module';
     UserModule,
     TrackModule,
     FavoritesModule,
+    AuthModule,
+    LoggerModule,
     TypeOrmModule.forRoot(typeormConfig.options),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    { provide: APP_FILTER, useClass: CustomExceptionsFilter },
+    { provide: APP_GUARD, useClass: CustomAuthGuard },
+  ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(CustomLoggerMiddleware).forRoutes('*');
+  }
+}

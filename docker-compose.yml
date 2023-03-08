@@ -16,6 +16,7 @@ services:
       - custom-network
     volumes:
       - ./src:/usr/app/src
+      - ./logs:/usr/app/logs
 
   postgres:
     build: ./database
@@ -34,7 +35,7 @@ services:
     networks:
       - custom-network
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+    - postgres_data:/var/lib/postgresql/data
     command: [
       "postgres",
       "-c", "logging_collector=true",

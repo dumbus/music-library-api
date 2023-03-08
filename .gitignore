@@ -36,3 +36,4 @@ lerna-debug.log*
 
 # Production files
 .env
+/database/postgres_data
