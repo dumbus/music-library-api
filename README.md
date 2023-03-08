@@ -1,9 +1,6 @@
-# Home Library Service: Logging & Error handling and Authentication & Authorization
+# Music Library API
 
-[Logging & Error handling Assignment](https://github.com/AlreadyBored/nodejs-assignments/blob/main/assignments/logging-error-handling/assignment.md)  
-[Authentication & Authorization Assignment](https://github.com/AlreadyBored/nodejs-assignments/blob/main/assignments/authentication/assignment.md)  
-[Logging & Error handling Scoring](https://github.com/AlreadyBored/nodejs-assignments/blob/main/assignments/logging-error-handling/score.md)  
-[Authentication & Authorization Scoring](https://github.com/AlreadyBored/nodejs-assignments/blob/main/assignments/authentication/score.md)
+A Music Library API created with NestJS.
 
 ## Prerequisites
 
@@ -21,10 +18,6 @@ git clone https://github.com/dumbus/nodejs2022Q4-service.git
 ### 2. Change active directory:
 ```
 cd nodejs2022Q4-service
-```
-### 3. Change repository branch:
-```
-git checkout logger-authentification
 ```
 
 ## How to run application with Docker:
